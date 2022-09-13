@@ -32,7 +32,7 @@ public class StockService {
     /**
      * 获取全部股票基础数据
      */
-    public List<StockDetail> getAllStockMsg(int threadCount){
+    public List<StockDetail> updateAllStockMsg(int threadCount){
 
         String res;
         List<StockDetail> stockDetailList = new LinkedList<>();
@@ -41,11 +41,8 @@ public class StockService {
             res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_INFO_A_CODE_NAME,null);
             //res 格式: [{"code":"871981","name":"晶赛科技"},{"code":"872925","name":"锦好医疗"}]
             List<StockCode> r = new Gson().fromJson(res,new TypeToken<List<StockCode>>() {}.getType());
-
             if(threadCount < 2){//单线程模式
-
                 for ( StockCode code : r ) {
-
                     StockDetail detail = new StockDetail();
 
                     //0.检查股票是否已经存在
@@ -61,36 +58,8 @@ public class StockService {
                     List<StockMsg> detailStock = new Gson().fromJson(resStock,new TypeToken<List<StockMsg>>() {}.getType());
 
                     //2.解析查询结果
-                    for ( StockMsg m : detailStock ) {
-                        switch(m.getItem()){
-                            case "总市值" :
-                                detail.setTotalCapitalization(Double.valueOf(m.getValue().toString()));
-                                break;
-                            case "流通市值" :
-                                detail.setCirculatingCapitalization(Double.valueOf(m.getValue().toString()));
-                                break;
-                            case "行业" :
-                                detail.setIndustry(m.getValue().toString());
-                                break;
-                            case "上市时间" :
-                                detail.setMarketTime(m.getValue().toString());
-                                break;
-                            case "股票代码" :
-                                detail.setStockCode(m.getValue().toString());
-                                break;
-                            case "股票简称" :
-                                detail.setStockName(m.getValue().toString());
-                                break;
-                            case "总股本" :
-                                detail.setTotalCapital(Double.valueOf(m.getValue().toString()));
-                                break;
-                            case "流通股" :
-                                detail.setCirculatingCapital(Double.valueOf(m.getValue().toString()));
-                                break;
-                            default :
-                                detail.setStockCode(null);
-                        }
-                    }
+                    detail = BeanTransformation.createStockDetailFromList(detailStock);
+                    log.info("新增股票 code:" + detail.getStockCode());
                     stockDetailMapper.insert(detail);
 
                 }
