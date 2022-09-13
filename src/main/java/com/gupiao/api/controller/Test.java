@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
+import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.service.HttpService;
@@ -41,7 +42,7 @@ public class Test {
     public String index() {
 
         Integer count = 0;
-        List<StockDetail> stockDetailList = stockService.getAllStockMsg(100);
+        List<StockDetail> stockDetailList = stockService.updateAllStockMsg(100);
         for (StockDetail detail: stockDetailList) {
             count ++;
         }
@@ -74,7 +75,7 @@ public class Test {
     public String index3() {
 
         Map<String, String> pa = new HashMap<>();
-        pa.put("CODE_ID", "");
+        pa.put("CODE_ID", "002921");
         pa.put("START_DATE", "20220901");
         pa.put("END_DATE", "20220930");
         String res = null;
@@ -85,9 +86,10 @@ public class Test {
         }
         List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
         for (Map<String,String> map: resList) {
-            IndustryTransactions b = BeanTransformation.createIndustryTransactionsFromList(map);
+            StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
             b.setTradeDate("202201");
-            industryTransactionsMapper.insert(b);
+            System.out.println(b);
+            //industryTransactionsMapper.insert(b);
         }
         return "ok:";
     }
