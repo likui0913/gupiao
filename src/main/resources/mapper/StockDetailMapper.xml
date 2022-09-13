@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockDetail">
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="stockName" column="stock_name" jdbcType="VARCHAR"/>
+            <result property="marketTime" column="market_time" jdbcType="VARCHAR"/>
+            <result property="industry" column="industry" jdbcType="VARCHAR"/>
+            <result property="totalCapital" column="total_capital" jdbcType="DECIMAL"/>
+            <result property="circulatingCapital" column="circulating_capital" jdbcType="DECIMAL"/>
+            <result property="totalCapitalization" column="total_capitalization" jdbcType="DECIMAL"/>
+            <result property="circulatingCapitalization" column="circulating_capitalization" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        stock_code,stock_name,market_time,
+        industry,total_capital,circulating_capital,
+        total_capitalization,circulating_capitalization
+    </sql>
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockDetail" useGeneratedKeys="true">
+        insert into stock_detail(stock_code,stock_name,market_time,
+                                 industry,total_capital,circulating_capital,
+                                 total_capitalization,circulating_capitalization)
+        values(#{stockCode,jdbcType=VARCHAR},#{stockName,jdbcType=VARCHAR},#{marketTime,jdbcType=VARCHAR},
+               #{industry,jdbcType=VARCHAR},#{totalCapital,jdbcType=DECIMAL},#{circulatingCapital,jdbcType=DECIMAL},
+               #{totalCapitalization,jdbcType=DECIMAL},#{circulatingCapitalization,jdbcType=DECIMAL})
+    </insert>
+
+    <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select stock_code,stock_name,market_time,
+               industry,total_capital,circulating_capital,
+               total_capitalization,circulating_capitalization
+        from stock_detail
+        where stock_code = #{code,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

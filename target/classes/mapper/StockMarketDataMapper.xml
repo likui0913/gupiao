@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockMarketDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockMarketData">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="openingPrice" column="opening_price" jdbcType="DECIMAL"/>
+            <result property="closingPrice" column="closing_price" jdbcType="DECIMAL"/>
+            <result property="highestPrice" column="highest_price" jdbcType="DECIMAL"/>
+            <result property="lowestPrice" column="lowest_price" jdbcType="DECIMAL"/>
+            <result property="volume" column="volume" jdbcType="DECIMAL"/>
+            <result property="turnover" column="turnover" jdbcType="DECIMAL"/>
+            <result property="amplitude" column="amplitude" jdbcType="DECIMAL"/>
+            <result property="quoteChange" column="quote_change" jdbcType="DECIMAL"/>
+            <result property="upsAndDowns" column="ups_and_downs" jdbcType="DECIMAL"/>
+            <result property="turnoverRate" column="turnover_rate" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,trade_date,
+        opening_price,closing_price,highest_price,
+        lowest_price,volume,turnover,
+        amplitude,quote_change,ups_and_downs,
+        turnover_rate
+    </sql>
+
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockMarketData" useGeneratedKeys="true">
+        insert into stock_detail(stock_code,trade_date,
+                                 opening_price,closing_price,highest_price,
+                                 lowest_price,volume,turnover,
+                                 amplitude,quote_change,ups_and_downs,
+                                 turnover_rate)
+        values(#{stockCode,jdbcType=VARCHAR},#{trade_date,jdbcType=VARCHAR},
+               #{opening_price,jdbcType=VARCHAR},#{closing_price,jdbcType=VARCHAR},#{highest_price,jdbcType=DECIMAL},
+               #{lowest_price,jdbcType=DECIMAL},#{volume,jdbcType=DECIMAL},#{turnover,jdbcType=DECIMAL},
+               #{amplitude,jdbcType=DECIMAL},#{quote_change,jdbcType=DECIMAL},#{ups_and_downs,jdbcType=DECIMAL},
+               #{turnover_rate,jdbcType=DECIMAL})
+    </insert>
+
+    <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select stock_code,stock_name,market_time,
+               industry,total_capital,circulating_capital,
+               total_capitalization,circulating_capitalization
+        from stock_detail
+        where stock_code = #{code,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

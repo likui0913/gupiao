@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.IndustryTransactionsMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.IndustryTransactions">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+            <result property="projectNameEnglish" column="project_name_english" jdbcType="VARCHAR"/>
+            <result property="tradingDays" column="trading_days" jdbcType="INTEGER"/>
+            <result property="turnover" column="turnover" jdbcType="DECIMAL"/>
+            <result property="percentageOfTransactionTurnover" column="percentage_of_transaction_turnover" jdbcType="FLOAT"/>
+            <result property="numberOfTraded" column="number_of_traded" jdbcType="DECIMAL"/>
+            <result property="percentageOfTraded" column="percentage_of_traded" jdbcType="FLOAT"/>
+            <result property="numberOfTransactions" column="Number_of_transactions" jdbcType="DECIMAL"/>
+            <result property="percentageOfTransactions" column="percentage_of_transactions" jdbcType="FLOAT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,trade_date,project_name,
+        project_name_english,trading_days,turnover,
+        percentage_of_transaction_turnover,number_of_traded,percentage_of_traded,
+        Number_of_transactions,percentage_of_transactions
+    </sql>
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.IndustryTransactions" useGeneratedKeys="true">
+        insert into industry_transactions(trade_date,project_name,
+                                 project_name_english,trading_days,turnover,
+                                 percentage_of_transaction_turnover,number_of_traded,percentage_of_traded,
+                                 Number_of_transactions,percentage_of_transactions)
+        values(#{tradeDate,jdbcType=VARCHAR},#{projectName,jdbcType=VARCHAR},
+               #{projectNameEnglish,jdbcType=VARCHAR},#{tradingDays,jdbcType=VARCHAR},#{turnover,jdbcType=DECIMAL},
+               #{percentageOfTransactionTurnover,jdbcType=DOUBLE},#{numberOfTraded,jdbcType=DECIMAL},#{percentageOfTraded,jdbcType=DOUBLE},
+               #{numberOfTransactions,jdbcType=DECIMAL},#{percentageOfTransactions,jdbcType=DOUBLE})
+    </insert>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select id,trade_date,project_name,
+               project_name_english,trading_days,turnover,
+               percentage_of_transaction_turnover,number_of_traded,percentage_of_traded,
+               Number_of_transactions,percentage_of_transactions
+        from industry_transactions
+        where trade_date = #{tradeDate,jdbcType=VARCHAR} and project_name = #{name,jdbcType=VARCHAR}
+    </select>
+
+</mapper>
