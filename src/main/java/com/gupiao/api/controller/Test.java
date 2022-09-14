@@ -8,6 +8,7 @@ import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
+import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.service.HttpService;
 import com.gupiao.service.StockService;
 import com.gupiao.util.BeanTransformation;
@@ -36,6 +37,9 @@ public class Test {
 
     @Autowired
     StockService stockService;
+
+    @Autowired
+    StockMarketDataMapper stockMarketDataMapper;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -73,25 +77,8 @@ public class Test {
     @RequestMapping("/test3")
     @ResponseBody
     public String index3() {
-
-        Map<String, String> pa = new HashMap<>();
-        pa.put("CODE_ID", "002921");
-        pa.put("START_DATE", "20220901");
-        pa.put("END_DATE", "20220930");
-        String res = null;
-        try {
-            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_HIST, pa);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
-        for (Map<String,String> map: resList) {
-            StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
-            b.setTradeDate("202201");
-            System.out.println(b);
-            //industryTransactionsMapper.insert(b);
-        }
-        return "ok:";
+        stockService.updateStockMarketAllData(100);
+        return "ok";
     }
 
 }

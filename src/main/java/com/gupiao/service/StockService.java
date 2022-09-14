@@ -5,11 +5,17 @@ import com.google.gson.reflect.TypeToken;
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.bean.api.StockMsg;
 import com.gupiao.enums.ApiUrlPath;
+import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
+import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
+import com.gupiao.generator.mapper.StockMarketDataMapper;
+import com.gupiao.service.stock.StockMarketDataThread;
 import com.gupiao.service.stock.StockServiceThread;
 import com.gupiao.util.BeanTransformation;
 import lombok.extern.slf4j.Slf4j;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +34,12 @@ public class StockService {
 
     @Autowired
     StockDetailMapper stockDetailMapper;
+
+    @Autowired
+    IndustryTransactionsMapper industryTransactionsMapper;
+
+    @Autowired
+    StockMarketDataMapper stockMarketDataMapper;
 
     /**
      * 获取全部股票基础数据
@@ -132,36 +144,105 @@ public class StockService {
      * 获取行业交易信息，参数为年月
      * @return
      */
-    public String getIndustryTransactions(String date){
+    public void getIndustryTransactions(String date){
 
-        String res = null;
         try {
-            Map<String,String> pa = new HashMap<>();
-            pa.put("DATE_PARAMS","202201");
-            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_SZSE_SECTOR_SUMMARY,pa);
-            List<Map<String,String>> resList = new Gson().fromJson(res,new TypeToken<List<Map<String, String>>>() {}.getType());
-            for (Map<String,String> resOne : resList) {
-                /*
-                 {
-                    "项目名称": "合计",
-                    "项目名称-英文": "Total",
-                    "交易天数": 19,
-                    "成交金额-人民币元": 11786437756873,
-                    "成交金额-占总计": 100.0,
-                    "成交股数-股数": 904978116344,
-                    "成交股数-占总计": 100.0,
-                    "成交笔数-笔": 982714260,
-                    "成交笔数-占总计": 100.0
-                 }
-                */
-                System.out.println(resOne.get("项目名称"));
+            Map<String, String> pa = new HashMap<>();
+            pa.put("DATE_PARAMS", date);
+            String res = null;
+            try {
+                res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_SZSE_SECTOR_SUMMARY, pa);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
+            List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
+            for (Map<String,String> map: resList) {
+                IndustryTransactions b = BeanTransformation.createIndustryTransactionsFromList(map);
+                b.setTradeDate("202201");
+                industryTransactionsMapper.insert(b);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("getIndustryTransactions error",e);
         }
-        return res;
 
+    }
+
+    /**
+     * 更新全部股票的交易信息
+     */
+    public void updateStockMarketAllData(int threadCount){
+
+        String res;
+        try {
+            //1.获取全部股票信息
+            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_INFO_A_CODE_NAME,null);
+            //res 格式: [{"code":"871981","name":"晶赛科技"},{"code":"872925","name":"锦好医疗"}]
+            List<StockCode> r = new Gson().fromJson(res,new TypeToken<List<StockCode>>() {}.getType());
+            //2.逐个股票获取交易信息
+
+            if(threadCount < 2){//单线程模式
+                for (StockCode code:r) {
+                    this.getStockMarketAllDataByCode(code.getCode());
+                }
+            }else{//按照多线程模式执行
+
+                //计算每个执行的股票个数
+                Integer everyThreadCount = r.size()/threadCount;
+                Integer tmp = 0;
+                List<StockCode> tmpList = new LinkedList<>();
+
+                for (StockCode code:r) {
+
+                    tmpList.add(code);
+                    if(tmp <= everyThreadCount){
+                        tmp++;
+                    }else{
+                        StockMarketDataThread t = new StockMarketDataThread();
+                        t.setStockService(this);
+                        t.setLists(tmpList);
+                        t.start();
+                        tmpList = new LinkedList<>();
+                        tmp = 0;
+                    }
+                }
+                //处理最后一个
+                StockMarketDataThread t = new StockMarketDataThread();
+                t.setStockService(this);
+                t.setLists(tmpList);
+                t.start();
+
+            }
+
+
+        }catch (Exception e){
+            log.error("updateStockMarketAllData--error",e);
+        }
+
+    }
+
+    /**
+     * 通过股票code获取，股票历史交易数据 复权后
+     * @param code
+     */
+    public void getStockMarketAllDataByCode(String code){
+        log.info("线程ID:" + Thread.currentThread().getId() + "获取股票:" + code + "全部交易信息。");
+        Map<String, String> pa = new HashMap<>();
+        pa.put("CODE_ID", code);
+        String res = null;
+        try {
+            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_HIST_ALL, pa);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
+        List<StockMarketData> records = new LinkedList<>();
+        for (Map<String,String> map: resList) {
+            StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
+            b.setStockCode(code);
+            records.add(b);
+        }
+        stockMarketDataMapper.batchInsert(records);
     }
 
     public static void main(String[] args) {

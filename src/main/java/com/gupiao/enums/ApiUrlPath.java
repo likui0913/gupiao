@@ -20,6 +20,8 @@ public enum ApiUrlPath {
     STOCK_ZH_A_SPOT("api/public/stock_zh_a_spot","新浪财经-沪深京 A 股数据, 重复运行本函数会被新浪暂时封 IP, 建议增加时间间隔"),
     STOCK_ZH_A_HIST("api/public/stock_zh_a_hist?symbol=CODE_ID&period=daily&adjust=hfq&start_date=START_DATE&end_date=END_DATE",
             "东方财富-沪深京 A 股日频率数据; 历史数据按日频率更新, 当日收盘价请在收盘后获取"),
+    STOCK_ZH_A_HIST_ALL("api/public/stock_zh_a_hist?symbol=CODE_ID&period=daily&adjust=hfq",
+            "东方财富-沪深京 A 股日频率数据; 历史数据按日频率更新, 当日收盘价请在收盘后获取 不传开始和结束时间，抓取该股票全部交易数据"),
     STOCK_ZH_A_HIST_163("api/public/stock_zh_a_hist_163","网易财经-行情首页-沪深 A 股-每日行情; 该接口主要用户获取流通市值、总市值等指标"),
     STOCK_ZH_A_MINUTE("api/public/stock_zh_a_minute","新浪财经-沪深京 A 股股票或者指数的分时数据，目前可以获取 1, 5, 15, 30, 60 分钟的数据频率, 可以指定是否复权"),
     STOCK_ZH_A_HIST_MIN_EM("api/public/stock_zh_a_hist_min_em","东方财富网-行情首页-沪深京 A 股-每日分时行情; 该接口只能获取近期的分时数据，注意时间周期的设置"),

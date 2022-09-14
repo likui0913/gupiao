@@ -20,7 +20,7 @@ public class UpdateFullStockUpdateTask {
     @Autowired
     StockService stockService;
 
-    @Scheduled(cron="0 */1 * * * *")
+    //@Scheduled(cron="0 0 */1 * * *")
     private void configureTasks(){
         try{
             log.info("开始刷新全部股票信息,date:" + LocalDateTime.now());

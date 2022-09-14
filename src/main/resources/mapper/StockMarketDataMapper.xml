@@ -30,24 +30,49 @@
 
 
     <insert id="insert" parameterType="com.gupiao.generator.domain.StockMarketData" useGeneratedKeys="true">
-        insert into stock_detail(stock_code,trade_date,
-                                 opening_price,closing_price,highest_price,
-                                 lowest_price,volume,turnover,
-                                 amplitude,quote_change,ups_and_downs,
-                                 turnover_rate)
-        values(#{stockCode,jdbcType=VARCHAR},#{trade_date,jdbcType=VARCHAR},
-               #{opening_price,jdbcType=VARCHAR},#{closing_price,jdbcType=VARCHAR},#{highest_price,jdbcType=DECIMAL},
-               #{lowest_price,jdbcType=DECIMAL},#{volume,jdbcType=DECIMAL},#{turnover,jdbcType=DECIMAL},
-               #{amplitude,jdbcType=DECIMAL},#{quote_change,jdbcType=DECIMAL},#{ups_and_downs,jdbcType=DECIMAL},
-               #{turnover_rate,jdbcType=DECIMAL})
+        insert into stock_market_data(stock_code,trade_date,
+                                      opening_price,closing_price,highest_price,
+                                      lowest_price,volume,turnover,
+                                      amplitude,quote_change,ups_and_downs,
+                                      turnover_rate)
+        values(#{stockCode,jdbcType=VARCHAR},#{tradeDate,jdbcType=VARCHAR},
+               #{openingPrice,jdbcType=DECIMAL},#{closingPrice,jdbcType=DECIMAL},#{highestPrice,jdbcType=DECIMAL},
+               #{lowestPrice,jdbcType=DECIMAL},#{volume,jdbcType=DECIMAL},#{turnover,jdbcType=DECIMAL},
+               #{amplitude,jdbcType=DECIMAL},#{quoteChange,jdbcType=DECIMAL},#{upsAndDowns,jdbcType=DECIMAL},
+               #{turnoverRate,jdbcType=DECIMAL})
     </insert>
 
-    <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select stock_code,stock_name,market_time,
-               industry,total_capital,circulating_capital,
-               total_capitalization,circulating_capitalization
-        from stock_detail
-        where stock_code = #{code,jdbcType=VARCHAR}
+    <insert id="batchInsert" parameterType="com.gupiao.generator.domain.StockMarketData" useGeneratedKeys="true">
+        insert into stock_market_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          stock_code,trade_date,
+          opening_price,closing_price,highest_price,
+          lowest_price,volume,turnover,
+          amplitude,quote_change,ups_and_downs,
+          turnover_rate
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            <trim suffixOverrides=",">
+                #{item.stockCode,jdbcType=VARCHAR},#{item.tradeDate,jdbcType=VARCHAR},
+                #{item.openingPrice,jdbcType=DECIMAL},#{item.closingPrice,jdbcType=DECIMAL},#{item.highestPrice,jdbcType=DECIMAL},
+                #{item.lowestPrice,jdbcType=DECIMAL},#{item.volume,jdbcType=DECIMAL},#{item.turnover,jdbcType=DECIMAL},
+                #{item.amplitude,jdbcType=DECIMAL},#{item.quoteChange,jdbcType=DECIMAL},#{item.upsAndDowns,jdbcType=DECIMAL},
+                #{item.turnoverRate,jdbcType=DECIMAL}
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,
+               opening_price,closing_price,highest_price,
+               lowest_price,volume,turnover,
+               amplitude,quote_change,ups_and_downs,
+               turnover_rate
+        from stock_market_data
+        where stock_code = #{code,jdbcType=VARCHAR} and trade_date = #{tradeDate,jdbcType=VARCHAR}
     </select>
 
 

@@ -5,6 +5,8 @@ import com.gupiao.generator.domain.StockMarketData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 /**
 * @author kuili
@@ -17,7 +19,9 @@ public interface StockMarketDataMapper {
 
     void insert(StockMarketData stockMarketData);
 
-    StockMarketData selectByCode(@Param("code") String code);
+    void batchInsert(List<StockMarketData> records);
+
+    StockMarketData selectByCode(@Param("code") String code,@Param("tradeDate") String tradeDate);
 
 }
 
