@@ -15,6 +15,7 @@ public class DateUtils {
     public static String DATE_FORMATE2 = "yyyy-MM-dd HH:mm:ss";
     public static String DATE_FORMATE3 = "yyyy-MM-dd 00:00:00";
     public static String DATE_FORMATE4 = "yyyyMMdd";
+    public static String DATE_FORMATE5 = "yyyy-MM-dd";
 
 
     /**

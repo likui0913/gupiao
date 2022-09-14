@@ -8,22 +8,23 @@ import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.domain.SysSetting;
 import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
+import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.service.stock.StockMarketDataThread;
 import com.gupiao.service.stock.StockServiceThread;
 import com.gupiao.util.BeanTransformation;
+import com.gupiao.util.DateUtils;
+import com.gupiao.util.StaticValue;
 import lombok.extern.slf4j.Slf4j;
 import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 股票基础数据
@@ -40,6 +41,9 @@ public class StockService {
 
     @Autowired
     StockMarketDataMapper stockMarketDataMapper;
+
+    @Autowired
+    SysSettingMapper sysSettingMapper;
 
     /**
      * 获取全部股票基础数据
@@ -173,6 +177,24 @@ public class StockService {
      */
     public void updateStockMarketAllData(int threadCount){
 
+        SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_ALL_STOCK_DATA_KEY);
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        if(null != setting){
+            if(nowDate.equals(setting.getSysValue())){
+                log.info("本日已更新全量数据，无法再次更新");
+                return;
+            }else{
+                sysSettingMapper.updateByKey(StaticValue.UPDATE_ALL_STOCK_DATA_KEY,nowDate);
+            }
+
+        }else{
+            setting = new SysSetting();
+            setting.setSysKey(StaticValue.UPDATE_ALL_STOCK_DATA_KEY);
+            setting.setSysValue(nowDate);
+            setting.setDes("");
+            sysSettingMapper.insert(setting);
+        }
+
         String res;
         try {
             //1.获取全部股票信息
@@ -246,10 +268,7 @@ public class StockService {
     }
 
     public static void main(String[] args) {
-        String v = "{\"item\":\"上市时间\",\"value\":20161012}";
-        StockMsg r = new Gson().fromJson(v,StockMsg.class);
-        Integer s = Double.valueOf(r.getValue().toString()).intValue();
-        System.out.println(s.toString());
+        DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
     }
 
 }
