@@ -18,9 +18,9 @@ public class UpdateStockTransactionDetailTask {
     @Autowired
     StockService stockService;
 
-    //@Scheduled(cron="0/5 * * * * *")
+    @Scheduled(cron="* * * */1 * *")
     private void configureTasks(){
-        stockService.updateStockMarketAllData(100);
+        stockService.getAllStockYesterdayData(5);
     }
 
 }

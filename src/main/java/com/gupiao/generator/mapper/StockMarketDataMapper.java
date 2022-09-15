@@ -23,6 +23,13 @@ public interface StockMarketDataMapper {
 
     StockMarketData selectByCode(@Param("code") String code,@Param("tradeDate") String tradeDate);
 
+    /**
+     * 查询指定股票数据库内最新的存储记录
+     * @param code
+     * @return
+     */
+    StockMarketData selectMaxDate(@Param("code") String code);
+
 }
 
 

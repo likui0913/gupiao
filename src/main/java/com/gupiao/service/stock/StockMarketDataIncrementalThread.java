@@ -3,12 +3,11 @@ package com.gupiao.service.stock;
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.service.StockService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Slf4j
-public class StockMarketDataThread extends Thread{
+public class StockMarketDataIncrementalThread extends Thread{
 
     protected List<StockCode> lists;
 
@@ -35,14 +34,14 @@ public class StockMarketDataThread extends Thread{
         try{
             for (StockCode code:lists) {
                 try{
-                    stockService.getStockMarketAllDataByCode(code.getCode());
+                    stockService.getStockYesterdayDataByCode(code.getCode());
                 }catch (Exception e){
-                    log.error("StockMarketDataThread 出错！",e);
+                    log.error("StockMarketDataIncrementalThread 出错！",e);
                     e.printStackTrace();
                 }
             }
         }catch (Exception e){
-            log.error("StockMarketDataThread 出错！",e);
+            log.error("StockMarketDataIncrementalThread 出错！",e);
             e.printStackTrace();
         }
 

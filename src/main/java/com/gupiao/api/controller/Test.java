@@ -77,7 +77,7 @@ public class Test {
     @RequestMapping("/test3")
     @ResponseBody
     public String index3() {
-        stockService.updateStockMarketAllData(1);
+        stockService.updateStockMarketAllData(20);
         return "ok";
     }
 

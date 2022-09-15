@@ -13,6 +13,7 @@ import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
+import com.gupiao.service.stock.StockMarketDataIncrementalThread;
 import com.gupiao.service.stock.StockMarketDataThread;
 import com.gupiao.service.stock.StockServiceThread;
 import com.gupiao.util.BeanTransformation;
@@ -248,7 +249,9 @@ public class StockService {
      * @param code
      */
     public void getStockMarketAllDataByCode(String code){
+
         log.info("线程ID:" + Thread.currentThread().getId() + "获取股票:" + code + "全部交易信息。");
+
         Map<String, String> pa = new HashMap<>();
         pa.put("CODE_ID", code);
         String res = null;
@@ -271,4 +274,101 @@ public class StockService {
         DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
     }
 
+    public void getAllStockYesterdayData(int threadCount){
+
+        SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_STOCK_DATA_KEY);
+        if(null != setting){
+            sysSettingMapper.updateByKey(StaticValue.UPDATE_STOCK_DATA_KEY,DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2));
+        }else{
+            setting = new SysSetting();
+            setting.setSysKey(StaticValue.UPDATE_STOCK_DATA_KEY);
+            setting.setSysValue(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2));
+            setting.setDes("");
+            sysSettingMapper.insert(setting);
+        }
+
+        String res;
+        try {
+            //1.获取全部股票信息
+            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_INFO_A_CODE_NAME,null);
+            List<StockCode> r = new Gson().fromJson(res,new TypeToken<List<StockCode>>() {}.getType());
+            //2.逐个股票获取交易信息
+
+            if(threadCount < 2){//单线程模式
+                for (StockCode code:r) {
+                    this.getStockYesterdayDataByCode(code.getCode());
+                }
+            }else{//按照多线程模式执行
+
+                //计算每个执行的股票个数
+                Integer everyThreadCount = r.size()/threadCount;
+                Integer tmp = 0;
+                List<StockCode> tmpList = new LinkedList<>();
+
+                for (StockCode code:r) {
+
+                    tmpList.add(code);
+                    if(tmp <= everyThreadCount){
+                        tmp++;
+                    }else{
+                        StockMarketDataThread t = new StockMarketDataThread();
+                        t.setStockService(this);
+                        t.setLists(tmpList);
+                        t.start();
+                        tmpList = new LinkedList<>();
+                        tmp = 0;
+                    }
+                }
+                //处理最后一个
+                StockMarketDataIncrementalThread t = new StockMarketDataIncrementalThread();
+                t.setStockService(this);
+                t.setLists(tmpList);
+                t.start();
+
+            }
+
+        }catch (Exception e){
+            log.error("getAllStockYesterdayData--error",e);
+        }
+
+    }
+
+    public void getStockYesterdayDataByCode(String code) throws Exception{
+
+        StockMarketData stockMarketData = stockMarketDataMapper.selectMaxDate(code);
+        ApiUrlPath path = null;
+        Map<String,String> params = new HashMap<>();
+        if(null == stockMarketData){
+            //数据内没有对应股票数据，需要抓取全部数据
+            path = ApiUrlPath.STOCK_ZH_A_HIST_ALL;
+            params.put("CODE_ID", code);
+        }else{
+            //数据库内有数据，只需要抓取后续的数据
+            path = ApiUrlPath.STOCK_ZH_A_HIST;
+            params.put("CODE_ID", code);
+            String startDate = DateUtils.dateAddDays(stockMarketData.getTradeDate(),DateUtils.DATE_FORMATE4,1L);
+            String endDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE4);
+            params.put("START_DATE", startDate);
+            params.put("END_DATE", endDate);
+        }
+
+        String res = "";
+        try {
+            res = HttpService.getDataFromUrl(path, params);
+        } catch (IOException e) {
+            log.error("getStockYesterdayDataByCode 出现错误:" ,e);
+            e.printStackTrace();
+            return;
+        }
+
+        List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
+        List<StockMarketData> records = new LinkedList<>();
+        for (Map<String,String> map: resList) {
+            StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
+            b.setStockCode(code);
+            records.add(b);
+        }
+        stockMarketDataMapper.batchInsert(records);
+
+    }
 }
