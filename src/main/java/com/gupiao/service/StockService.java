@@ -346,8 +346,18 @@ public class StockService {
             //数据库内有数据，只需要抓取后续的数据
             path = ApiUrlPath.STOCK_ZH_A_HIST;
             params.put("CODE_ID", code);
-            String startDate = DateUtils.dateAddDays(stockMarketData.getTradeDate(),DateUtils.DATE_FORMATE4,1L);
+            //修正时间格式
+            stockMarketData.setTradeDate(stockMarketData.getTradeDate().replace("-",""));
+            //截止时间是T-1天
             String endDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE4);
+            endDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE4,-1L);
+            String startDate = stockMarketData.getTradeDate();
+            if(startDate.equals(endDate)){
+                return;
+            }
+            //已经存在的数据不用补助
+            startDate = DateUtils.dateAddDays(stockMarketData.getTradeDate(),DateUtils.DATE_FORMATE4,1L);
+
             params.put("START_DATE", startDate);
             params.put("END_DATE", endDate);
         }
@@ -367,6 +377,9 @@ public class StockService {
             StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
             b.setStockCode(code);
             records.add(b);
+        }
+        if(null == records || records.size() < 1){
+            return;
         }
         stockMarketDataMapper.batchInsert(records);
 

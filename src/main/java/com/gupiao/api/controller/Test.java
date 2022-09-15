@@ -6,12 +6,15 @@ import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.domain.SysSetting;
 import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
+import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.service.HttpService;
 import com.gupiao.service.StockService;
 import com.gupiao.util.BeanTransformation;
+import com.gupiao.util.StaticValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +43,9 @@ public class Test {
 
     @Autowired
     StockMarketDataMapper stockMarketDataMapper;
+
+    @Autowired
+    SysSettingMapper sysSettingMapper;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -77,7 +83,19 @@ public class Test {
     @RequestMapping("/test3")
     @ResponseBody
     public String index3() {
-        stockService.updateStockMarketAllData(20);
+
+        /*
+        SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_STOCK_DATA_KEY_THREAD_SIZE);
+        if(null == setting){
+            setting = new SysSetting();
+            setting.setSysKey(StaticValue.UPDATE_STOCK_DATA_KEY_THREAD_SIZE);
+            setting.setSysValue("1");
+            setting.setDes("");
+            sysSettingMapper.insert(setting);
+        }
+
+        stockService.getAllStockYesterdayData(Integer.parseInt(setting.getSysValue()));
+         */
         return "ok";
     }
 
