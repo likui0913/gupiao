@@ -33,24 +33,32 @@ public class StatisticService {
 
     /**
      * 计算一段时间的统计数据
-     * @param code
-     * @param startDate
-     * @param endDate
+     * @param code 股票编码
+     * @param startDate 开始计算的时间
+     * @param endDate 结束结算的时间
      */
     public void cpmputeXDayMovingAverage(String code,String startDate,String endDate){
+
         String tmpDate = startDate;
+        //对 endDate 增加1天 用于判断结束
         String tmpEndDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE5,1L);
-        List<StockMarketData> res = stockMarketDataMapper.selectByCodeAndDate(code,endDate,150);
 
         while(!tmpDate.equals(tmpEndDate)){
+
             log.info("tmpDate=" + tmpDate + ";tmpEndDate=" + tmpEndDate);
 
+            //查询历史交易数据，比如计算日期是2022-09-01，需要查询日期小于2022-09-01的150条交易记录
+            List<StockMarketData> res = stockMarketDataMapper.selectByCodeAndDate(code,tmpDate,150);
+
+            //查询当天记录是否已经存在，如果已经存在则不用计算
             StockMarketXMovingAverage resDate = stockMarketXMovingAverageMapper.selectByCodeAndDate(code,tmpDate);
-            if(null != resDate){
+
+            if( null != resDate ){
                 log.info("code=" + code + " 在日期=" + tmpDate + "的数据已经存在");
                 tmpDate = DateUtils.dateAddDays(tmpDate,DateUtils.DATE_FORMATE5,1L);
                 continue;
             }
+
             try{
                 StockMarketXMovingAverage stockMarketXMovingAverage = this.computeAllDayMovingAverage(res,code,tmpDate);
                 stockMarketXMovingAverageMapper.insert(stockMarketXMovingAverage);
@@ -58,6 +66,7 @@ public class StatisticService {
                 log.error("code" + code + "统计数据，计算错误:" + e.getMessage());
             }
             tmpDate = DateUtils.dateAddDays(tmpDate,DateUtils.DATE_FORMATE5,1L);
+
         }
 
     }
@@ -67,72 +76,87 @@ public class StatisticService {
             String code,
             String endDate){
 
+        // endDate 是记录时间，依赖的历史记录截止时间是 tmpEndDate = endDate-1
+        String tmpEndDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE5,-1L);
+
         StockMarketXMovingAverage stockMarketXMovingAverage = new StockMarketXMovingAverage();
         BigDecimal x3,x5,x7,x10,x15,x30,x60,x90,x120,x150;
 
-        String tmpEndDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE5,1L);
-        StockMarketData stockMarketData = stockMarketDataMapper.selectByCode(code,tmpEndDate);
+        //查询计算日期的交易数据，主要是获取当日的收盘价
+        StockMarketData stockMarketData = stockMarketDataMapper.selectByCode(code,endDate);
+
         if(null == stockMarketData){
-            throw new RuntimeException("code" + code + " 在" + tmpEndDate + "日不存在数据，不能生成统计数据" );
+            throw new RuntimeException("code" + code + " 在" + endDate + "日不存在数据，不能获取当日收盘价" );
         }
 
         try {
-            x3 = this.getXDayMovingAverage(res,code,endDate,3);
+            x3 = this.getXDayMovingAverage(res,code,tmpEndDate,3);
+            log.info("x3=" + x3);
         }catch (Exception e){
+            log.info(e.getMessage());
             x3 = BigDecimal.ZERO;
         }
 
         try {
-            x5 = this.getXDayMovingAverage(res,code,endDate,3);
+            x5 = this.getXDayMovingAverage(res,code,tmpEndDate,5);
+            log.info("x5=" + x5);
         }catch (Exception e){
+            log.info(e.getMessage());
             x5 = BigDecimal.ZERO;
         }
 
         try {
-            x7 = this.getXDayMovingAverage(res,code,endDate,3);
+            x7 = this.getXDayMovingAverage(res,code,tmpEndDate,7);
         }catch (Exception e){
+            log.info(e.getMessage());
             x7 = BigDecimal.ZERO;
         }
 
         try {
-            x10 = this.getXDayMovingAverage(res,code,endDate,3);
+            x10 = this.getXDayMovingAverage(res,code,tmpEndDate,10);
         }catch (Exception e){
+            log.info(e.getMessage());
             x10 = BigDecimal.ZERO;
         }
 
         try {
-            x15 = this.getXDayMovingAverage(res,code,endDate,3);
+            x15 = this.getXDayMovingAverage(res,code,tmpEndDate,15);
         }catch (Exception e){
+            log.info(e.getMessage());
             x15 = BigDecimal.ZERO;
         }
 
         try {
-            x30 = this.getXDayMovingAverage(res,code,endDate,3);
+            x30 = this.getXDayMovingAverage(res,code,tmpEndDate,30);
         }catch (Exception e){
+            log.info(e.getMessage());
             x30 = BigDecimal.ZERO;
         }
 
         try {
-            x60 = this.getXDayMovingAverage(res,code,endDate,3);
+            x60 = this.getXDayMovingAverage(res,code,tmpEndDate,60);
         }catch (Exception e){
             x60 = BigDecimal.ZERO;
         }
 
         try {
-            x90 = this.getXDayMovingAverage(res,code,endDate,3);
+            x90 = this.getXDayMovingAverage(res,code,tmpEndDate,90);
         }catch (Exception e){
+            log.debug(e.getMessage());
             x90 = BigDecimal.ZERO;
         }
 
         try {
-            x120 = this.getXDayMovingAverage(res,code,endDate,3);
+            x120 = this.getXDayMovingAverage(res,code,tmpEndDate,120);
         }catch (Exception e){
+            log.debug(e.getMessage());
             x120 = BigDecimal.ZERO;
         }
 
         try {
-            x150 = this.getXDayMovingAverage(res,code,endDate,3);
+            x150 = this.getXDayMovingAverage(res,code,tmpEndDate,150);
         }catch (Exception e){
+            log.debug(e.getMessage());
             x150 = BigDecimal.ZERO;
         }
 
@@ -161,21 +185,22 @@ public class StatisticService {
      * @param days
      */
     public BigDecimal getXDayMovingAverage(List<StockMarketData> res,String code,String endDate,Integer days){
-
+        log.info("code="+code + ",endDate="+endDate+"days=" + days);
         if(null == res || res.size() < days){
             throw new RuntimeException("code:" + code + " 历史数据不足，不能计算过去" + days + "天的平均数据！");
         }
-        if(!res.get(0).getTradeDate().equals(endDate)){
-            throw new RuntimeException("code:" + code + " 的最新数据是"+ res.get(0).getTradeDate() +"，不能计算 " + endDate + "的平均数据！");
-        }
         BigDecimal all = BigDecimal.valueOf(0.0);
         Integer size = 0;
+
         for (StockMarketData d:res) {
-            all = all.add(d.getClosingPrice());
-            if(size > days){
+
+            if(size >= days){
                 break;
             }
+            all = all.add(d.getClosingPrice());
+            log.info("days="+days + "value=" + all);
             size++;
+
         }
         all = all.divide(BigDecimal.valueOf(days),8, BigDecimal.ROUND_HALF_UP);
         return all;

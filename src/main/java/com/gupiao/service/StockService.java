@@ -339,8 +339,18 @@ public class StockService {
         Map<String,String> params = new HashMap<>();
         if(null == stockMarketData){
             //数据内没有对应股票数据，需要抓取全部数据
-            path = ApiUrlPath.STOCK_ZH_A_HIST_ALL;
+            //path = ApiUrlPath.STOCK_ZH_A_HIST_ALL;
+            path = ApiUrlPath.STOCK_ZH_A_HIST;
+
+
+            //截止时间是T-1天
+            String endDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE4);
+            endDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE4,-1L);
+
             params.put("CODE_ID", code);
+            params.put("START_DATE", "20220101");
+            params.put("END_DATE", endDate);
+
         }else{
             //数据库内有数据，只需要抓取后续的数据
             path = ApiUrlPath.STOCK_ZH_A_HIST;
@@ -363,6 +373,7 @@ public class StockService {
 
         String res = "";
         try {
+            log.info("code = " + code + new Gson().toJson(params));
             res = HttpService.getDataFromUrl(path, params);
         } catch (IOException e) {
             log.error("getStockYesterdayDataByCode 出现错误:" ,e);

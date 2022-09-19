@@ -66,20 +66,7 @@ public class Test {
     @ResponseBody
     public String index2() {
 
-        Map<String, String> pa = new HashMap<>();
-        pa.put("DATE_PARAMS", "202201");
-        String res = null;
-        try {
-            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_SZSE_SECTOR_SUMMARY, pa);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
-        for (Map<String,String> map: resList) {
-            IndustryTransactions b = BeanTransformation.createIndustryTransactionsFromList(map);
-            b.setTradeDate("202201");
-            industryTransactionsMapper.insert(b);
-        }
+        stockService.updateAllStockMsg(1);
         return "ok:";
     }
 
@@ -87,18 +74,7 @@ public class Test {
     @ResponseBody
     public String index3() {
 
-        /*
-        SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_STOCK_DATA_KEY_THREAD_SIZE);
-        if(null == setting){
-            setting = new SysSetting();
-            setting.setSysKey(StaticValue.UPDATE_STOCK_DATA_KEY_THREAD_SIZE);
-            setting.setSysValue("1");
-            setting.setDes("");
-            sysSettingMapper.insert(setting);
-        }
-
-        stockService.getAllStockYesterdayData(Integer.parseInt(setting.getSysValue()));
-         */
+        stockService.getAllStockYesterdayData(1);
         return "ok";
     }
 
