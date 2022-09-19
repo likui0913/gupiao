@@ -1,4 +1,4 @@
-package com.gupiao.service.stock;
+package com.gupiao.service.thread;
 
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.service.StockService;

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据分析平台</title>
+</head>
+<body>
+<button id="btn">按钮</button>
+<input id="showmsg">
+
+<script src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $('#btn').click(function() {
+            alert("test")
+            $.ajax({
+                url: '/user/load',
+                type: 'get',
+                dataType: 'text',
+                success: function(data) {
+                    $('#showmsg').attr('value',data)
+                    alert(typeof data)
+                    alert(data.status)
+                }
+            })
+
+        })
+
+    })
+</script>
+
+</body>
+</html>

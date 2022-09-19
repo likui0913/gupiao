@@ -1,4 +1,4 @@
-package com.gupiao.service.stock;
+package com.gupiao.service.thread;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

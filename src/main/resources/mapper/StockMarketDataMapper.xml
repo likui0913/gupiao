@@ -86,5 +86,26 @@
         order by trade_date desc limit 1
     </select>
 
+    <select id="selectByCodeAndDate" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,
+               opening_price,closing_price,highest_price,
+               lowest_price,volume,turnover,
+               amplitude,quote_change,ups_and_downs,
+               turnover_rate
+        from stock_market_data
+        where stock_code = #{code,jdbcType=VARCHAR} and trade_date &lt;= #{endDate,jdbcType=VARCHAR}
+        order by trade_date desc limit #{limited,jdbcType=INTEGER};
+    </select>
+
+    <select id="selectNearByCodeAndDate" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,
+               opening_price,closing_price,highest_price,
+               lowest_price,volume,turnover,
+               amplitude,quote_change,ups_and_downs,
+               turnover_rate
+        from stock_market_data
+        where stock_code = #{code,jdbcType=VARCHAR} and trade_date &gt; #{endDate,jdbcType=VARCHAR}
+        order by trade_date asc limit 1;
+    </select>
 
 </mapper>

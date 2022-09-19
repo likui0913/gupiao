@@ -1,9 +1,8 @@
-package com.gupiao.service.stock;
+package com.gupiao.service.thread;
 
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.service.StockService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 

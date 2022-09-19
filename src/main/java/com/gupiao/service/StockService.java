@@ -13,14 +13,13 @@ import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
-import com.gupiao.service.stock.StockMarketDataIncrementalThread;
-import com.gupiao.service.stock.StockMarketDataThread;
-import com.gupiao.service.stock.StockServiceThread;
+import com.gupiao.service.thread.StockMarketDataIncrementalThread;
+import com.gupiao.service.thread.StockMarketDataThread;
+import com.gupiao.service.thread.StockServiceThread;
 import com.gupiao.util.BeanTransformation;
 import com.gupiao.util.DateUtils;
 import com.gupiao.util.StaticValue;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
