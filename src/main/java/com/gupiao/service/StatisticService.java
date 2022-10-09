@@ -1,8 +1,13 @@
 package com.gupiao.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.gupiao.bean.api.StockCode;
+import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.domain.StockMarketXMovingAverage;
 import com.gupiao.generator.mapper.*;
+import com.gupiao.service.thread.StockMarketDataThread;
 import com.gupiao.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -30,6 +36,27 @@ public class StatisticService {
 
     @Autowired
     StockMarketXMovingAverageMapper stockMarketXMovingAverageMapper;
+
+    public void cpmputeAllStackMovingAverage(){
+
+        String res;
+        try {
+            //1.获取全部股票信息
+            res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_INFO_A_CODE_NAME, null);
+            List<StockCode> r = new Gson().fromJson(res, new TypeToken<List<StockCode>>() {}.getType());
+
+            for (StockCode code:r) {
+                String endDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+                this.cpmputeXDayMovingAverage(code.getCode(),"2022-01-01",endDate);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("StatisticService" + e.getMessage());
+        }
+
+    }
+
 
     /**
      * 计算一段时间的统计数据

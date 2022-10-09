@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -48,4 +49,39 @@ public class DateUtils {
         return localDate.format(dateTimeFormatter);
     }
 
+    /**
+     * 计算两个时间相差天数 t2-t1
+     * @param startDate
+     * @param endDate
+     * @param formate
+     * @return
+     * @throws ParseException
+     */
+    public static int daysDiff(String startDate,String endDate,String formate) throws ParseException{
+
+        SimpleDateFormat sdf=new SimpleDateFormat(formate);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(sdf.parse(startDate));
+        long time1 = cal.getTimeInMillis();
+
+        cal.setTime(sdf.parse(endDate));
+        long time2 = cal.getTimeInMillis();
+        long between_days=(time2-time1)/(1000*60*60*24);
+
+        return Integer.parseInt(String.valueOf(between_days));
+
+    }
+
+    public static void main(String[] args) {
+        try {
+            String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+            String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
+            Integer different= DateUtils.daysDiff("2022-10-02","2022-10-03",DateUtils.DATE_FORMATE5);
+            System.out.println(endDateNow);
+            System.out.println(endDateT_1);
+            System.out.println(different);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 }

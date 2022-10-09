@@ -273,7 +273,11 @@ public class StockService {
         DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
     }
 
-    public void getAllStockYesterdayData(int threadCount){
+    /**
+     * @param threadCount
+     * @param sync 多线程模式起效，true 执行线程会执行一批任务，false 执行线程启动工作线程后立刻退出
+     */
+    public void getAllStockYesterdayData(int threadCount,Boolean sync){
 
         SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_STOCK_DATA_KEY);
         if(null != setting){
@@ -313,7 +317,11 @@ public class StockService {
                         StockMarketDataThread t = new StockMarketDataThread();
                         t.setStockService(this);
                         t.setLists(tmpList);
-                        t.start();
+                        if(Boolean.TRUE.equals(sync)){
+                            t.run();
+                        }else{
+                            t.start();
+                        }
                         tmpList = new LinkedList<>();
                         tmp = 0;
                     }
@@ -345,10 +353,9 @@ public class StockService {
 
             //截止时间是T-1天
             String endDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE4);
-            endDate = DateUtils.dateAddDays(endDate,DateUtils.DATE_FORMATE4,-1L);
 
             params.put("CODE_ID", code);
-            params.put("START_DATE", "20220101");
+            params.put("START_DATE", "20210101");
             params.put("END_DATE", endDate);
 
         }else{

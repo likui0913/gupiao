@@ -74,7 +74,7 @@ public class Test {
     @ResponseBody
     public String index3() {
 
-        stockService.getAllStockYesterdayData(1);
+        stockService.getAllStockYesterdayData(1,Boolean.TRUE);
         return "ok";
     }
 

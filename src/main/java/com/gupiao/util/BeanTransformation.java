@@ -1,5 +1,6 @@
 package com.gupiao.util;
 
+import com.gupiao.bean.api.StockCode;
 import com.gupiao.bean.api.StockMsg;
 import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
@@ -48,6 +49,14 @@ public class BeanTransformation {
             }
         }
         return detail;
+    }
+
+    public static StockCode createUSAStockCodeFromList(Map<String,String> stockMsgList){
+
+        StockCode code = new StockCode();
+        code.setName(stockMsgList.get("名称"));
+        code.setCode(stockMsgList.get("代码"));
+        return code;
     }
 
     public static IndustryTransactions createIndustryTransactionsFromList(Map<String,String> params){

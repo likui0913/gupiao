@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据分析平台</title>
+</head>
+<body>
+
+<div>
+    搜索:<input id="param" value="000417">
+    <button id="query">查询</button>
+    <button id="up_page">上一页</button>
+    <button id="down_page">下一页</button>
+</div>
+
+<div>
+    <table id="resTable" border="1" cellspacing="0">
+        <tr>
+            <th>编码</th>
+            <th>名称</th>
+            <th>行业</th>
+            <th>操作</th>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function (){
+
+        var showPages = 0;//当前展示的是第几页
+
+        //查询按钮事件响应
+        $("#query").click(function (){
+
+            showPages = 0;
+            var param = document.getElementById("param").value;
+
+            var resJson = queryData(param,0);
+            updateTab(resJson,true);
+        });
+
+        $("#up_page").click(function (){
+
+            var param = document.getElementById("param").value;
+
+            if(showPages < 1){
+                showPages = 0;
+            }else {
+                showPages--;
+            }
+
+            var resJson = queryData(param,showPages);
+            updateTab(resJson,true);
+        });
+
+        $("#down_page").click(function (){
+
+            var param = document.getElementById("param").value;
+
+            showPages++;
+
+            var resJson = queryData(param,showPages);
+            updateTab(resJson,true);
+
+        });
+
+        function queryData(param,pages){
+
+            var res;
+            $.ajax({
+                url:"http://127.0.0.1/query/stock",
+                //url:"http://118.190.147.193/query/stock",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    param:param,
+                    pages:pages
+                },
+                success:function (resData){
+                    res = JSON.parse(resData);
+
+                },
+                error:function (err){}
+            })
+            return res;
+        }
+
+        //更新表内容
+        function updateTab(res,isClean){
+            if(true === isClean){
+                $("#resTable").find("tr:not(:first)").remove();
+            }
+            var resTable = document.getElementById('resTable');
+            for(var i in res){
+
+                var newRow = resTable.insertRow();
+                newRow.insertCell(0).innerHTML = res[i].stockCode;
+                newRow.insertCell(1).innerHTML = res[i].stockName;
+                newRow.insertCell(2).innerHTML = res[i].industry;
+                var btns = newRow.insertCell(3);
+
+                var btn_select = document.createElement("button");
+                btn_select.setAttribute('id','select');
+                btn_select.textContent = '查询';
+                btn_select.onclick = function (){
+                    alert(this.parentNode.parentNode.cells[0].innerHTML);
+                }
+
+                btns.appendChild(btn_select);
+
+            }
+        }
+
+    });
+</script>
+
+</body>
+</html>

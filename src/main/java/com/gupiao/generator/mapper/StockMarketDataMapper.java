@@ -21,20 +21,35 @@ public interface StockMarketDataMapper {
 
     void batchInsert(List<StockMarketData> records);
 
-    StockMarketData selectByCode(@Param("code") String code,@Param("tradeDate") String tradeDate);
+    StockMarketData selectByCode(
+            @Param("code") String code,
+            @Param("tradeDate") String tradeDate);
 
-    StockMarketData selectNearByCodeAndDate(@Param("code") String code,@Param("tradeDate") String tradeDate);
+    List<StockMarketData> selectByCodeAndTwoDate(
+            @Param("code") String code,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate);
+
+    StockMarketData selectNearByCodeAndDate(
+            @Param("code") String code,
+            @Param("tradeDate") String tradeDate);
 
     /**
      * 查询指定股票数据库内最新的存储记录
      * @param code
      * @return
      */
-    StockMarketData selectMaxDate(@Param("code") String code);
+    StockMarketData selectMaxDate(
+            @Param("code") String code);
 
     List<StockMarketData> selectByCodeAndDate(
             @Param("code") String code,
             @Param("endDate") String endDate,
+            @Param("limited") Integer limited);
+
+    List<StockMarketData> selectByStartDateAndDays(
+            @Param("code") String code,
+            @Param("startDate") String startDate,
             @Param("limited") Integer limited);
 
 }

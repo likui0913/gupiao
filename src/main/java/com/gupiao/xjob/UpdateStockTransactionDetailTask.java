@@ -10,10 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.swing.text.StyledEditorKit;
 import java.time.LocalDateTime;
 
 /**
- * 股票交易数据 stock_market_data
+ * 股票交易明细数据 stock_market_data
  */
 @Configuration //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling //2.开启定时任务
@@ -26,7 +27,7 @@ public class UpdateStockTransactionDetailTask {
     @Autowired
     SysSettingMapper sysSettingMapper;
 
-    @Scheduled(cron="0 0 0 * * ?")
+    //@Scheduled(cron="0/5 * * * * *")
     private void configureTasks(){
 
         log.info("UpdateStockTransactionDetailTask 定时任务启动");
@@ -39,7 +40,8 @@ public class UpdateStockTransactionDetailTask {
             sysSettingMapper.insert(setting);
         }
 
-        stockService.getAllStockYesterdayData(Integer.parseInt(setting.getSysValue()));
+        stockService.getAllStockYesterdayData(Integer.parseInt(setting.getSysValue()), Boolean.TRUE);
+
     }
 
 }

@@ -5,6 +5,8 @@ package com.gupiao.enums;
  */
 public enum ApiUrlPath {
 
+    //https://akshare.xyz/data/index.html
+
     STOCK_SSE_SUMMARY("api/public/stock_sse_summary","上海证券交易所-股票数据总貌"),
     STOCK_SZSE_SUMMARY("api/public/stock_szse_summary","深圳证券交易所-市场总貌-证券类别统计"),
     STOCK_SZSE_AREA_SUMMARY("api/public/stock_szse_area_summary","深圳证券交易所-市场总貌-地区交易排序"),
@@ -32,7 +34,14 @@ public enum ApiUrlPath {
     STOCK_INFO_SH_NAME_CODE("api/public/stock_info_sh_name_code","上海证券交易所股票代码和简称数据"),
     STOCK_INFO_BJ_NAME_CODE("api/public/stock_info_bj_name_code","北京证券交易所股票代码和简称数据"),
     STOCK_INFO_SZ_NAME_CODE("api/public/stock_info_sz_name_code","深证证券交易所股票代码和股票简称数据"),
-    STOCK_INFO_A_CODE_NAME("api/public/stock_info_a_code_name","沪深京三个交易所,沪深京 A 股股票代码和股票简称数据");
+    STOCK_INFO_A_CODE_NAME("api/public/stock_info_a_code_name","沪深京三个交易所,沪深京 A 股股票代码和股票简称数据"),
+    STOCK_US_SPOT_EM("api/public/stock_us_spot_em","获取美股全部股票信息"),
+    STOCK_US_HIST("api/public/stock_us_hist","获取美股的交易记录"),
+    STOCK_DZJY_SCTJ("api/public/stock_dzjy_sctj","上证指数信息"),
+
+    ;
+
+
 
     private String path;
     private String desc;

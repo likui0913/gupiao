@@ -5,28 +5,95 @@
     <title>数据分析平台</title>
 </head>
 <body>
-<button id="btn">按钮</button>
-<input id="showmsg">
 
-<script src="js/jquery-3.6.1.min.js"></script>
+<div>
+    编码:<input id="code" value="000417">
+    开始:<input id="startDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31">
+    结束:<input id="endDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31">
+    <button id="compute">计算</button>
+</div>
+
+<div>
+    <table id="resTable" border="1" cellspacing="0">
+        <tr>
+            <th>日期</th>
+            <th>指标</th>
+            <th>结果</th>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
 <script type="text/javascript">
-    $(function() {
-        $('#btn').click(function() {
-            alert("test")
+    $(document).ready(function (){
+
+        const codeElement = document.querySelector("#code");
+        codeElement.addEventListener("input",inputEvent);
+        codeElement.addEventListener("click",clickEvent);
+
+        //code输入框输入事件
+        function inputEvent(e){}
+
+        //code输入框点击事件，选中事件
+        function clickEvent(e){}
+
+        $("#compute").click(function (){
+
+            //获取处理输入信息
+            var code = document.getElementById("code").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            if(startDate >= endDate){
+                alert("开始时间不能大于等于结束时间");
+                return;
+            }
+
             $.ajax({
-                url: '/user/load',
-                type: 'get',
-                dataType: 'text',
-                success: function(data) {
-                    $('#showmsg').attr('value',data)
-                    alert(typeof data)
-                    alert(data.status)
-                }
+                url:"http://127.0.0.1/compute/test",
+                //url:"http://118.190.147.193/compute/test",
+                type:"GET",
+                dataType:"text",
+                data:{
+                    code:code,
+                    startDate:startDate,
+                    endDate:endDate
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === true){
+                        $("#resTable").find("tr:not(:first)").remove();
+                        var tab = document.getElementById("resTable");
+                        for(var i in resJson.msg){
+                            var tradd = tab.insertRow();
+                            var colorSet = "#FF0000";
+                            if(resJson.msg[i].quoteChange.indexOf('-') > -1){
+                                colorSet = "#4dd711";
+                            }
+                            tradd.innerHTML='<td>' + resJson.msg[i].date + '</td><td bgcolor="'+ colorSet +'">' +  + resJson.msg[i].quoteChange + '</td><td>' + resJson.msg[i].transactionResults + '</td>'
+                            //绿色：#4dd711 红色：#FF0000
+                        }
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
             })
+        });
 
-        })
 
-    })
+
+    });
 </script>
 
 </body>

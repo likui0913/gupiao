@@ -13,10 +13,13 @@ public class StockDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
     /**
      * 股票编码
      */
     private String stockCode;
+
+    private Integer stockType;
 
     /**
      * 股票名称
