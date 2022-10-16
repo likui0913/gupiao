@@ -20,30 +20,38 @@
     <sql id="Base_Column_List">
         id,stock_code,stock_type,stock_name,market_time,
         industry,total_capital,circulating_capital,
-        total_capitalization,circulating_capitalization
+        total_capitalization,circulating_capitalization,is_focus as focus
     </sql>
 
     <insert id="insert" parameterType="com.gupiao.generator.domain.StockDetail" useGeneratedKeys="true">
         insert into stock_detail(stock_code,stock_type,stock_name,market_time,
                                  industry,total_capital,circulating_capital,
-                                 total_capitalization,circulating_capitalization)
+                                 total_capitalization,circulating_capitalization,is_focus)
         values(#{stockCode,jdbcType=VARCHAR},#{stockType,jdbcType=INTEGER},#{stockName,jdbcType=VARCHAR},#{marketTime,jdbcType=VARCHAR},
                #{industry,jdbcType=VARCHAR},#{totalCapital,jdbcType=DECIMAL},#{circulatingCapital,jdbcType=DECIMAL},
-               #{totalCapitalization,jdbcType=DECIMAL},#{circulatingCapitalization,jdbcType=DECIMAL})
+               #{totalCapitalization,jdbcType=DECIMAL},#{circulatingCapitalization,jdbcType=DECIMAL},#{isFocus,jdbcType=INTEGER})
     </insert>
 
     <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         select id,stock_code,stock_type,stock_name,market_time,
                industry,total_capital,circulating_capital,
-               total_capitalization,circulating_capitalization
+               total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
         where stock_code = #{code,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectNextByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,stock_code,stock_type,stock_name,market_time,
+               industry,total_capital,circulating_capital,
+               total_capitalization,circulating_capitalization,is_focus as focus
+        from stock_detail
+        where id > (select id from stock_detail where stock_code = #{code,jdbcType=VARCHAR}) order by id asc limit 1;
     </select>
 
     <select id="selectByCodeAndPages" resultMap="BaseResultMap">
         select id,stock_code,stock_type,stock_name,market_time,
                industry,total_capital,circulating_capital,
-               total_capitalization,circulating_capitalization
+               total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
         where stock_type = 0 order by id asc limit #{limitStart,jdbcType=INTEGER},50;
     </select>
@@ -51,7 +59,7 @@
     <select id="selectAll" resultMap="BaseResultMap">
         select id,stock_code,stock_type,stock_name,market_time,
                industry,total_capital,circulating_capital,
-               total_capitalization,circulating_capitalization
+               total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
     </select>
 
@@ -59,6 +67,12 @@
         update stock_detail set
             industry = #{industry,jdbcType=VARCHAR},
         where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateFocusByCode">
+        update stock_detail set
+            is_focus = #{isFocus,jdbcType=INTEGER}
+            where stock_code = #{code,jdbcType=VARCHAR}
     </update>
 
 </mapper>

@@ -7,14 +7,11 @@ import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value = "/query")
 public class StockController {
 
@@ -31,6 +28,48 @@ public class StockController {
 
         List<StockDetail> res = stockDetailMapper.selectByCodeAndPages(param,pages);
         return new Gson().toJson(res);
+
+    }
+
+    @RequestMapping(value="/stock/detail",method = RequestMethod.GET)
+    @ResponseBody
+    public Object detail(@RequestParam("code") String code) {
+
+        StockDetail detail = stockDetailMapper.selectByCode(code);
+
+        ResponseBean bean = new ResponseBean();
+        bean.setStatus(Boolean.TRUE);
+        bean.setMsg(detail);
+        return new Gson().toJson(bean);
+
+    }
+
+    @RequestMapping(value="/stock/nextDetail",method = RequestMethod.GET)
+    @ResponseBody
+    public Object nextDetail(@RequestParam("code") String code) {
+
+        StockDetail detail = stockDetailMapper.selectNextByCode(code);
+
+        ResponseBean bean = new ResponseBean();
+        bean.setStatus(Boolean.TRUE);
+        bean.setMsg(detail);
+
+        return new Gson().toJson(bean);
+
+    }
+
+    @RequestMapping(value="/stock/isFocus",method = RequestMethod.GET)
+    @ResponseBody
+    public Object isFocus(@RequestParam("code") String code,
+                          @RequestParam("isFocus") Integer isFocus) {
+
+        stockDetailMapper.updateFocusByCode(code,Integer.valueOf(isFocus));
+
+        ResponseBean bean = new ResponseBean();
+        bean.setStatus(Boolean.TRUE);
+        bean.setMsg("success");
+
+        return new Gson().toJson(bean);
 
     }
 }

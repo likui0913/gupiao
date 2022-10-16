@@ -46,6 +46,7 @@ public class TransactionPlaybackService {
         for (StockMarketData stockMarketData:stockMarketDataList) {
             baseMount = baseMount.multiply(BigDecimal.valueOf(1).add(stockMarketData.getQuoteChange().divide(BigDecimal.valueOf(100))));
             ComputeDailyBean b = ComputeDailyBean.createBean(stockMarketData.getTradeDate(),stockMarketData.getQuoteChange(),baseMount);
+            b.setMarketData(stockMarketData);
             res.add(b);
         }
 
@@ -74,6 +75,7 @@ public class TransactionPlaybackService {
         for (StockMarketData stockMarketData:stockMarketDataList) {
             baseMount = baseMount.multiply(BigDecimal.valueOf(1).add(stockMarketData.getQuoteChange().divide(BigDecimal.valueOf(100))));
             ComputeDailyBean b = ComputeDailyBean.createBean(stockMarketData.getTradeDate(),stockMarketData.getQuoteChange(),baseMount);
+            b.setMarketData(stockMarketData);
             res.add(b);
         }
 

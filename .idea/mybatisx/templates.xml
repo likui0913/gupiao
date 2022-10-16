@@ -64,8 +64,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="StockMarketXMovingAverage" />
-                  <option name="tableName" value="stock_market_x_moving_average" />
+                  <option name="className" value="SysUser" />
+                  <option name="tableName" value="sys_user" />
                 </TableUIInfo>
               </list>
             </option>

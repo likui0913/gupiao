@@ -1,5 +1,6 @@
 package com.gupiao.bean;
 
+import com.gupiao.generator.domain.StockMarketData;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,6 +16,8 @@ public class ComputeDailyBean {
     private String quoteChange;
 
     private String transactionResults;
+
+    private StockMarketData marketData;
 
     public static ComputeDailyBean createBean(String d,BigDecimal q,BigDecimal t){
 

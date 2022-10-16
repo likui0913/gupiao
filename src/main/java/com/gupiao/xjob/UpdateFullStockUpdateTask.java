@@ -1,6 +1,7 @@
 package com.gupiao.xjob;
 
 import com.gupiao.generator.domain.SysSetting;
+import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.service.StockService;
 import com.gupiao.service.UpdateStockDailySaleService;
 import com.gupiao.service.UpdateStockListService;
@@ -31,13 +32,23 @@ public class UpdateFullStockUpdateTask {
     @Autowired
     UpdateStockDailySaleService updateStockDailySaleService;
 
+    @Autowired
+    SysSettingMapper sysSettingMapper;
+
     ReentrantLock lock = new ReentrantLock();
 
-    //@Scheduled(fixedDelay = 1000*60*30)
-    //@Async
+    @Scheduled(fixedDelay = 1000*60*30)
+    @Async
     public void updateStockSaleData(){
         try{
             log.info("开始增量刷新全部股票历史交易信息,date:" + LocalDateTime.now());
+
+            SysSetting setting = sysSettingMapper.selectByCode("updateStockSaleDataIsOn");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,结束增量刷新全部股票历史交易信息");
+                return;
+            }
+
             updateStockDailySaleService.updateAllStockDailySale();
             log.info("结束增量刷新全部股票历史交易信息,date:" + LocalDateTime.now());
         }catch (Exception e){
@@ -46,11 +57,18 @@ public class UpdateFullStockUpdateTask {
     }
 
     //每个6个小时更新1次
-    //@Scheduled(fixedDelay = 1000*60*60*6)
-    //@Async
+    @Scheduled(fixedDelay = 1000*60*60*6)
+    @Async
     public void updateAllStockMsg(){
         try{
             log.info("开始刷新全部股票基础信息,date:" + LocalDateTime.now());
+
+            SysSetting setting = sysSettingMapper.selectByCode("updateAllStockMsgIsOn");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,完成刷新全部股票基础信息");
+                return;
+            }
+
             this.getAllStock();
             log.info("完成刷新全部股票基础信息,date:" + LocalDateTime.now());
         }catch (Exception e){

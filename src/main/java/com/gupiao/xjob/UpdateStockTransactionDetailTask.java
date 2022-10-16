@@ -30,6 +30,8 @@ public class UpdateStockTransactionDetailTask {
     //@Scheduled(cron="0/5 * * * * *")
     private void configureTasks(){
 
+
+
         log.info("UpdateStockTransactionDetailTask 定时任务启动");
         SysSetting setting = sysSettingMapper.selectByCode(StaticValue.UPDATE_STOCK_DATA_KEY_THREAD_SIZE);
         if(null == setting){

@@ -16,7 +16,7 @@ public class BeanTransformation {
     public static StockDetail createStockDetailFromList(List<StockMsg> stockMsgList){
 
         StockDetail detail = new StockDetail();
-
+        detail.setFocus(0);
         for ( StockMsg m : stockMsgList) {
             switch(m.getItem()){
                 case "总市值" :

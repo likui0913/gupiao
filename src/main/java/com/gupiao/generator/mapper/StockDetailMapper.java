@@ -19,6 +19,8 @@ public interface StockDetailMapper {
 
     StockDetail selectByCode(@Param("code") String code);
 
+    StockDetail selectNextByCode(@Param("code") String code);
+
     List<StockDetail> selectByCodeAndPages(
             @Param("param") String param,
             @Param("limitStart") Integer limitStart);
@@ -26,6 +28,11 @@ public interface StockDetailMapper {
     List<StockDetail> selectAll();//BaseResultMap
 
     void updateById(StockDetail stockDetail);
+
+    void updateFocusByCode(
+            @Param("code") String code,
+            @Param("isFocus") Integer isFocus);
+
 
 }
 

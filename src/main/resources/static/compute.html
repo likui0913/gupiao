@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据分析平台</title>
+</head>
+
+<!--  -->
+<style type="text/css">
+    .show_table {
+        font-family: 'Helvetica Neue';
+    }
+</style>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.param.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+
+<body>
+
+<div>
+    编码:<input id="code" value="000417"><br>
+    开始:<input id="startDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31">
+    结束:<input id="endDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31"><br>
+    是否收藏：<input id="sign" value="收藏"><br>
+    行业:<input id="industry"><br>
+    <button id="compute">计算</button><br>
+</div>
+
+<hr>
+<div>
+    id:<input id="stockID" readonly="readonly"><br>
+    编码:<input id="stockCode" readonly="readonly"><br>
+    标记:<input id="isFocus" readonly="readonly"><br>
+    名称:<input id="stockName" readonly="readonly"><br>
+    上市时间:<input id="stockStartDate" readonly="readonly"><br>
+    行业:<input id="stockIndustry" readonly="readonly"><br>
+</div>
+
+<hr>
+<div>
+    <table id="resTable" border="1" cellspacing="0" class="show_table">
+        <tr>
+            <th>日期</th>
+            <th>指标</th>
+            <th>结果</th>
+            <!-- 当天交易的详细数据 -->
+            <th>开盘</th>
+            <th>收盘</th>
+            <th>成交量</th>
+            <th>成交额</th>
+            <th>换手率</th>
+        </tr>
+    </table>
+</div>
+
+<button id="last">上一个</button>
+<button id="next">下一个</button>
+<button id="focus">收藏</button>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+
+        init();
+
+        const codeElement = document.querySelector("#code");
+        codeElement.addEventListener("input",inputEvent);
+        codeElement.addEventListener("click",clickEvent);
+
+        //code输入框输入事件
+        function inputEvent(e){}
+
+        //code输入框点击事件，选中事件
+        function clickEvent(e){}
+
+        //计算详细信息
+        $("#compute").click(function (){
+
+            //获取处理输入信息
+            var code = document.getElementById("code").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            if(startDate >= endDate){
+                alert("开始时间不能大于等于结束时间");
+                return;
+            }
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "compute/compute",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:code,
+                    startDate:startDate,
+                    endDate:endDate
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        updateTable(resJson,true);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "query/stock/detail",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:code
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        updateStockDetail(resJson);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+        });
+
+        //查询下一个
+        $("#next").click(function (){
+
+            //获取处理输入信息
+            var code = document.getElementById("code").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            if(startDate >= endDate){
+                alert("开始时间不能大于等于结束时间");
+                return;
+            }
+
+            var newCode = null;
+            $.ajax({
+                url:globalConfig.remoteUlr + "query/stock/nextDetail",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:code
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        newCode = resJson.msg.stockCode;
+                        updateStockDetail(resJson);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+            if(null === newCode){
+                return;
+            }
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "compute/compute",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:newCode,
+                    startDate:startDate,
+                    endDate:endDate
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        updateTable(resJson,true)
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+        });
+
+        //查询上一个
+        $("#last").click(function (){
+
+            //获取处理输入信息
+            var code = document.getElementById("code").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            if(startDate >= endDate){
+                alert("开始时间不能大于等于结束时间");
+                return;
+            }
+
+            var newCode = null;
+            $.ajax({
+                url:globalConfig.remoteUlr + "query/stock/nextDetail",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:code
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        newCode = resJson.msg.stockCode;
+                        updateStockDetail(resJson);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+            if(null === newCode){
+                return;
+            }
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "compute/compute",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:newCode,
+                    startDate:startDate,
+                    endDate:endDate
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        updateTable(resJson,true)
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+        });
+
+        //收藏
+        $("#focus").click(function (){
+
+            //收藏必须现有code信息
+            var code = document.getElementById("stockCode").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            var focusValue = 0;
+            if("收藏" === document.getElementById("isFocus").value){
+                //界面显示收藏，则标记为取消
+                focusValue = 0;
+            }else{
+                //界面显示为取消，则标记为收藏
+                focusValue = 1;
+            }
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "query/stock/isFocus",
+                type:"GET",
+                dataType:"text",
+                async:false,
+                data:{
+                    code:code,
+                    isFocus:focusValue
+                },
+                success:function (resData){
+                    const resJson = JSON.parse(resData);
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+
+                        //执行成功，刷新界面显示值
+                        if( 1 === focusValue){
+                            document.getElementById("isFocus").value = "收藏"
+                        }else{
+                            document.getElementById("isFocus").value = "无"
+                        }
+
+                        alert("收藏成功！");
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+        });
+
+        function init(){
+
+            var code = getUrlParameter('code');
+            var startDate = getUrlParameter('startDate');
+            var endDate = getUrlParameter('endDate');
+
+            document.getElementById('code').value = code;
+            if(null !== startDate && startDate.length === 10){
+                document.getElementById('startDate').value = startDate;
+            }
+            if(null !== endDate && endDate.length === 10){
+                document.getElementById('endDate').value = endDate;
+            }
+
+        };
+
+        function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+
+        <!-- 刷新表格内数据 -->
+        function updateTable(resJson,isUpdate){
+
+            if(isUpdate === true){
+                $("#resTable").find("tr:not(:first)").remove();
+            }
+
+            var tab = document.getElementById("resTable");
+            for(var i in resJson.msg){
+                var tradd = tab.insertRow();
+                var colorSet = "#FF0000";
+                if(resJson.msg[i].quoteChange.indexOf('-') > -1){
+                    colorSet = "#4dd711";
+                }
+                tradd.innerHTML=
+                    '<td  align="right">' + resJson.msg[i].date + '</td><td  align="right" bgcolor="'+ colorSet +'">'
+                    + resJson.msg[i].quoteChange + '</td><td align="right">'
+                    + resJson.msg[i].transactionResults + '</td><td align="right">'
+                    + resJson.msg[i].marketData.openingPrice + '</td><td align="right">'
+                    + resJson.msg[i].marketData.closingPrice + '</td><td align="right">'
+                    + resJson.msg[i].marketData.volume + '</td><td align="right">'
+                    + resJson.msg[i].marketData.turnover + '</td><td align="right">'
+                    + resJson.msg[i].marketData.turnoverRate + '</td>';
+                //绿色：#4dd711 红色：#FF0000
+            }
+        }
+
+        function updateStockDetail(resJson){
+
+            document.getElementById("stockID").value = resJson.msg.id;
+            if(resJson.msg.focus === 1){
+                document.getElementById("isFocus").value = "收藏"
+            }else{
+                document.getElementById("isFocus").value = "无"
+            }
+            document.getElementById("stockCode").value = resJson.msg.stockCode;
+            document.getElementById("stockName").value = resJson.msg.stockName;
+            document.getElementById("stockStartDate").value = resJson.msg.marketTime;
+            document.getElementById("stockIndustry").value = resJson.msg.industry;
+
+            document.getElementById("code").value = resJson.msg.stockCode;
+
+        }
+
+    });
+</script>
+
+</body>
+
+</html>

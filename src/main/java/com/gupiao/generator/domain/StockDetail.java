@@ -21,6 +21,8 @@ public class StockDetail implements Serializable {
 
     private Integer stockType;
 
+    private Integer focus;
+
     /**
      * 股票名称
      */

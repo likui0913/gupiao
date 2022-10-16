@@ -6,6 +6,7 @@
 </head>
 <body>
 
+<!-- 搜索框 -->
 <div>
     搜索:<input id="param" value="000417">
     <button id="query">查询</button>
@@ -13,18 +14,21 @@
     <button id="down_page">下一页</button>
 </div>
 
+<!-- 展示内容 -->
 <div>
     <table id="resTable" border="1" cellspacing="0">
         <tr>
             <th>编码</th>
             <th>名称</th>
             <th>行业</th>
+            <th>标记</th>
             <th>操作</th>
         </tr>
     </table>
 </div>
 
 <script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
 <script type="text/javascript">
     $(document).ready(function (){
 
@@ -69,8 +73,8 @@
 
             var res;
             $.ajax({
-                url:"http://127.0.0.1/query/stock",
-                //url:"http://118.190.147.193/query/stock",
+                //url:globalConfig.remoteUlr + "query/stock",
+                url:globalConfig.remoteUlr + "query/stock",
                 type:"GET",
                 dataType:"text",
                 async:false,
@@ -80,7 +84,10 @@
                 },
                 success:function (resData){
                     res = JSON.parse(resData);
-
+                    if(res.status === false && res.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
                 },
                 error:function (err){}
             })
@@ -99,18 +106,45 @@
                 newRow.insertCell(0).innerHTML = res[i].stockCode;
                 newRow.insertCell(1).innerHTML = res[i].stockName;
                 newRow.insertCell(2).innerHTML = res[i].industry;
-                var btns = newRow.insertCell(3);
+                if(res[i].focus === 0){
+                    newRow.insertCell(3).innerHTML = "无"; //00A6FFFF
+                    newRow.insertCell(3).setAttribute("")
+                }else{
+                    newRow.insertCell(3).innerHTML = "收藏";
+                }
+
+                var btns = newRow.insertCell(4);
 
                 var btn_select = document.createElement("button");
                 btn_select.setAttribute('id','select');
                 btn_select.textContent = '查询';
                 btn_select.onclick = function (){
-                    alert(this.parentNode.parentNode.cells[0].innerHTML);
+
+                    //获取选中的code
+                    var code = this.parentNode.parentNode.cells[0].innerHTML;
+
+                    //计算开始和结束时间
+                    var startDate = getNowDate(subMouths(new Date(),-6));
+                    var endDate = getNowDate(new Date());
+
+                    url = "compute.html?code=" + code + "&startDate=" + startDate + "&endDate=" + endDate;
+                    window.location.href = url;
+
                 }
 
                 btns.appendChild(btn_select);
 
             }
+        }
+
+        //获取当前时间 yyyy-MM-dd 格式
+        function getNowDate(date){
+            return date.toISOString().split('T')[0];
+        }
+
+        function subMouths(date,s){
+            date.setMonth(date.getMonth()+s);
+            return date;
         }
 
     });
