@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.param.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+
+<body>
+<div>
+  <button id="getAll">全部</button>
+  <button id="compute">计算</button>
+  <button id="examination">试算</button>
+    <button id="netFlow">流向</button>
+  <button id="clean">退出</button>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function (){
+
+    //收藏
+    $("#getAll").click(function (){
+      window.location.href="all.html";
+        return;
+    });
+
+    //收藏
+    $("#compute").click(function (){
+      window.location.href="compute.html";
+        return;
+    });
+
+    //收藏
+    $("#examination").click(function (){
+      window.location.href="examination.html";
+        return;
+    });
+
+    //收藏
+    $("#clean").click(function (){
+      window.location.href="index.html";
+      return;
+    });
+
+      //收藏
+      $("#netFlow").click(function (){
+          window.location.href="netflow.html";
+          return;
+      });
+
+
+
+  });
+</script>
+</body>
+</html>

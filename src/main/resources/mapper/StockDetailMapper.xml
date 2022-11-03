@@ -45,7 +45,33 @@
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
-        where id > (select id from stock_detail where stock_code = #{code,jdbcType=VARCHAR}) order by id asc limit 1;
+        where id > (select id from stock_detail where stock_code = #{code,jdbcType=VARCHAR})
+        <choose>
+            <when test = " focus != null">
+                and is_focus = #{focus,jdbcType=INTEGER}
+            </when>
+            <when test = " industry != null">
+                and industry = #{industry,jdbcType=VARCHAR}
+            </when>
+        </choose>
+        order by id asc limit 1;
+    </select>
+
+    <select id="selectLastByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,stock_code,stock_type,stock_name,market_time,
+               industry,total_capital,circulating_capital,
+               total_capitalization,circulating_capitalization,is_focus as focus
+        from stock_detail
+        where id &lt; (select id from stock_detail where stock_code = #{code,jdbcType=VARCHAR})
+        <choose>
+            <when test = " focus != null">
+                and is_focus = #{focus,jdbcType=INTEGER}
+            </when>
+            <when test = " industry != null">
+                and industry = #{industry,jdbcType=VARCHAR}
+            </when>
+        </choose>
+        order by id desc limit 1;
     </select>
 
     <select id="selectByCodeAndPages" resultMap="BaseResultMap">
@@ -53,7 +79,18 @@
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
-        where stock_type = 0 order by id asc limit #{limitStart,jdbcType=INTEGER},50;
+        where stock_type = 0
+
+        <choose>
+            <when test = " focus != null">
+                and is_focus = #{focus,jdbcType=INTEGER}
+            </when>
+            <when test = " industry != null">
+                and industry = #{industry,jdbcType=VARCHAR}
+            </when>
+        </choose>
+
+        order by id asc limit #{limitStart,jdbcType=INTEGER},50;
     </select>
 
     <select id="selectAll" resultMap="BaseResultMap">

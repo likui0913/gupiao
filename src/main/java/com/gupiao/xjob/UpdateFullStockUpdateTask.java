@@ -5,6 +5,7 @@ import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.service.StockService;
 import com.gupiao.service.UpdateStockDailySaleService;
 import com.gupiao.service.UpdateStockListService;
+import com.gupiao.service.UpdateStockNetFlowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,9 @@ public class UpdateFullStockUpdateTask {
 
     @Autowired
     SysSettingMapper sysSettingMapper;
+
+    @Autowired
+    UpdateStockNetFlowService updateStockNetFlowService;
 
     ReentrantLock lock = new ReentrantLock();
 
@@ -73,6 +77,19 @@ public class UpdateFullStockUpdateTask {
             log.info("完成刷新全部股票基础信息,date:" + LocalDateTime.now());
         }catch (Exception e){
 
+        }
+    }
+
+    @Scheduled(fixedDelay = 1000*60*30)
+    @Async
+    public void updateStockMoneyFlowDate(){
+        try{
+
+            log.info("开始刷新南北资金流量信息,date:" + LocalDateTime.now());
+            updateStockNetFlowService.updateFlowData();
+            log.info("结束刷新南北资金流量信息,date:" + LocalDateTime.now());
+        }catch (Exception e){
+            log.error("updateStockSaleData 出现错误！",e);
         }
     }
 

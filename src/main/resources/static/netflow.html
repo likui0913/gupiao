@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流向</title>
+</head>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.param.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+
+<body>
+
+  <div>
+    流向:<select id="flowType" value="1">
+      <option value="1">北向</option>
+      <option value="2">南向</option>
+    </select><br>
+    开始:<input id="startDate" type="date" name="trip-start" value="2022-01-01" min="2000-01-01" max="2050-12-31">
+    结束:<input id="endDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31"><br>
+
+    <button id="compute">计算</button><br>
+  </div>
+  <div>
+    <div id="flowQuoteLine" style="width: 80%;height: 300px"></div>
+  </div>
+
+</body>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function (){
+
+
+    //计算开始和结束时间
+    document.getElementById("startDate").value = getNowDate(subMouths(new Date(),-2));
+    document.getElementById("endDate").value = getNowDate(new Date());
+
+    $("#compute").click(function (){
+
+      //获取处理输入信息
+      var startDate = document.getElementById("startDate").value;
+      var endDate = document.getElementById("endDate").value;
+
+      var flowType = document.getElementById("flowType").value;
+      //var flowTypeValue = flowType.options[flowType.selectedIndex].text;
+
+      var sParam = {};
+      sParam.flowStartDate = startDate;
+      sParam.flowEndDate = endDate;
+      if("1" === flowType){
+        sParam.flowType = "to_north";
+      }else{
+        sParam.flowType = "to_south";
+      }
+
+      var res = null;
+      $.ajax({
+        url:globalConfig.remoteUlr + "netFlow/history/detail",
+        type:"POST",
+        dataType:"json",
+        contentType:"application/json;charset=utf8",
+        async:false,
+        data: JSON.stringify(sParam),
+        success:function (resJson){
+
+          if(resJson.status === false && resJson.msg === "未登录"){
+            window.location.href="index.html";
+            return "";
+          }
+          if(resJson.status === true){
+            updateTable(resJson,false);
+          }else{
+            alert("后端处理失败！");
+            return "";
+          }
+        },
+        error:function (err){res = null}
+      })
+
+
+    });
+
+    function updateTable(resJson,isUpdate){
+
+      var myQuoteChart = echarts.init(document.getElementById('flowQuoteLine'));
+
+      var xAxis = new Array();
+      var yAxisQuoteData = new Array();
+
+      var size = 0;
+      for(var i in resJson.msg){
+
+        xAxis[size] = resJson.msg[i].flowDate;
+        yAxisQuoteData[size] = resJson.msg[i].count;
+        size++;
+
+      }
+
+      const optionQuote = {
+        title: {text: '走势图'},
+        tooltip: {},
+        legend: {data: ['结果']},
+        xAxis: {data: xAxis},
+        yAxis: {},
+        series: [{
+          name: '结果',
+          type: 'line',
+          data: yAxisQuoteData
+        }]
+      };
+
+      myQuoteChart.setOption(optionQuote);
+    }
+
+
+    //获取当前时间 yyyy-MM-dd 格式
+    function getNowDate(date){
+      return date.toISOString().split('T')[0];
+    }
+
+    function subMouths(date,s){
+      date.setMonth(date.getMonth()+s);
+      return date;
+    }
+
+  });
+</script>
+
+</html>

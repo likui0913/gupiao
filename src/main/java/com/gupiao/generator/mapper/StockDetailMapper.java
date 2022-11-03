@@ -19,10 +19,14 @@ public interface StockDetailMapper {
 
     StockDetail selectByCode(@Param("code") String code);
 
-    StockDetail selectNextByCode(@Param("code") String code);
+    StockDetail selectNextByCode(@Param("code") String code, @Param("focus") String focus,@Param("industry") String industry);
+
+    StockDetail selectLastByCode(@Param("code") String code, @Param("focus") String focus,@Param("industry") String industry);
 
     List<StockDetail> selectByCodeAndPages(
-            @Param("param") String param,
+            @Param("code") String code,
+            @Param("focus") String focus,
+            @Param("industry") String industry,
             @Param("limitStart") Integer limitStart);
 
     List<StockDetail> selectAll();//BaseResultMap

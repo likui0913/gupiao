@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>数据分析平台</title>
+    <title>详细数据</title>
 </head>
 
 <!--  -->
@@ -16,6 +17,7 @@
 <script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="js/jquery.param.min.js"></script>
 <script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
 
 <body>
 
@@ -23,8 +25,99 @@
     编码:<input id="code" value="000417"><br>
     开始:<input id="startDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31">
     结束:<input id="endDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31"><br>
-    是否收藏：<input id="sign" value="收藏"><br>
-    行业:<input id="industry"><br>
+    标记:<select id="stockSign" value="0">
+            <option value="0">无</option>
+            <option value="1">收藏</option>
+        </select><br>
+    行业:<select id="industrySearch" value="0">
+        <option value="0">无</option>
+        <option value="1">银行</option>
+        <option value="2">房地产开发</option>
+        <option value="3">软件开发</option>
+        <option value="4">环保行业</option>
+        <option value="5">房地产服务</option>
+        <option value="6">交运设备</option>
+        <option value="7">综合行业</option>
+        <option value="8">工程建设</option>
+        <option value="9">玻璃玻纤</option>
+        <option value="10">家电行业</option>
+        <option value="11">贸易行业</option>
+        <option value="12">光学光电子</option>
+        <option value="13">消费电子</option>
+        <option value="14">水泥建材</option>
+        <option value="15">汽车服务</option>
+        <option value="16">珠宝首饰</option>
+        <option value="17">电力行业</option>
+        <option value="18">医药商业</option>
+        <option value="19">汽车零部件</option>
+        <option value="20">通信设备</option>
+        <option value="21">计算机设备</option>
+        <option value="22">文化传媒</option>
+        <option value="23">通用设备</option>
+        <option value="24">多元金融</option>
+        <option value="25">电池</option>
+        <option value="26">装修装饰</option>
+        <option value="27">商业百货</option>
+        <option value="28">石油行业</option>
+        <option value="29">有色金属</option>
+        <option value="30">电子元件</option>
+        <option value="31">航运港口</option>
+        <option value="32">航空机场</option>
+        <option value="33">医疗服务</option>
+        <option value="34">化学制药</option>
+        <option value="35">工程机械</option>
+        <option value="36">证券</option>
+        <option value="37">化纤行业</option>
+        <option value="38">电网设备</option>
+        <option value="39">生物制品</option>
+        <option value="40">燃气</option>
+        <option value="41">化肥行业</option>
+        <option value="42">互联网服务</option>
+        <option value="43">化学原料</option>
+        <option value="44">中药</option>
+        <option value="45">旅游酒店</option>
+        <option value="46">铁路公路</option>
+        <option value="47">造纸印刷</option>
+        <option value="48">农牧饲渔</option>
+        <option value="49">贵金属</option>
+        <option value="50">专用设备</option>
+        <option value="51">美容护理</option>
+        <option value="52">农药兽药</option>
+        <option value="53">教育</option>
+        <option value="54">食品饮料</option>
+        <option value="55">公用事业</option>
+        <option value="56">汽车整车</option>
+        <option value="57">煤炭行业</option>
+        <option value="58">物流行业</option>
+        <option value="59">化学制品</option>
+        <option value="60">酿酒行业</option>
+        <option value="61">橡胶制品</option>
+        <option value="62">装修建材</option>
+        <option value="63">保险</option>
+        <option value="64">钢铁行业</option>
+        <option value="65">小金属</option>
+        <option value="66">包装材料</option>
+        <option value="67">半导体</option>
+        <option value="68">航天航空</option>
+        <option value="69">医疗器械</option>
+        <option value="70">纺织服装</option>
+        <option value="71">采掘行业</option>
+        <option value="72">工程咨询服务</option>
+        <option value="73">塑料制品</option>
+        <option value="74">通信服务</option>
+        <option value="75">电机</option>
+        <option value="76">家用轻工</option>
+        <option value="77">仪器仪表</option>
+        <option value="78">非金属材料</option>
+        <option value="79">专业服务</option>
+        <option value="80">游戏</option>
+        <option value="81">光伏设备</option>
+        <option value="82">能源金属</option>
+        <option value="83">风电设备</option>
+        <option value="84">电源设备</option>
+        <option value="85">电子化学品</option>
+        <option value="86">船舶制造</option>
+    </select>
     <button id="compute">计算</button><br>
 </div>
 
@@ -37,7 +130,16 @@
     上市时间:<input id="stockStartDate" readonly="readonly"><br>
     行业:<input id="stockIndustry" readonly="readonly"><br>
 </div>
-
+<div>
+    <div id="echartLine" style="width: 80%;height: 300px"></div>
+</div>
+<div>
+    <div id="echartQuoteLine" style="width: 80%;height: 300px"></div>
+</div>
+<div>
+    <button id="upLast">上一个</button>
+    <button id="upNext">下一个</button>
+</div>
 <hr>
 <div>
     <table id="resTable" border="1" cellspacing="0" class="show_table">
@@ -95,43 +197,18 @@
                 return;
             }
 
-            $.ajax({
-                url:globalConfig.remoteUlr + "compute/compute",
-                type:"GET",
-                dataType:"text",
-                async:false,
-                data:{
-                    code:code,
-                    startDate:startDate,
-                    endDate:endDate
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
-                    if(resJson.status === false && resJson.msg === "未登录"){
-                        window.location.href="index.html";
-                        return;
-                    }
-                    if(resJson.status === true){
-                        updateTable(resJson,true);
-                        return;
-                    }else{
-                        alert("后端处理失败！");
-                        return;
-                    }
-                },
-                error:function (err){}
-            })
+            //构建查询参数
+            var stockParam = {}
+            stockParam.code = code
 
             $.ajax({
                 url:globalConfig.remoteUlr + "query/stock/detail",
-                type:"GET",
-                dataType:"text",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
                 async:false,
-                data:{
-                    code:code
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
+                data: JSON.stringify(stockParam),
+                success:function (resJson){
                     if(resJson.status === false && resJson.msg === "未登录"){
                         window.location.href="index.html";
                         return;
@@ -146,6 +223,90 @@
                 },
                 error:function (err){}
             })
+
+            var computeParameter = {};
+            computeParameter.code = code;
+            computeParameter.startDate = startDate;
+            computeParameter.endDate = endDate;
+
+            var resJsonCompute = getComputeData(computeParameter);
+            updateTable(resJsonCompute,true);
+
+        });
+
+        //查询上一个
+        $("#last").click(function (){
+
+            //获取处理输入信息
+            var code = document.getElementById("code").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            if(null == code || "" === code){
+                alert("code不能为空");
+                return;
+            }else if(code.length !== 6){
+                alert("code长度必须为6");
+                return;
+            }
+
+            if(startDate >= endDate){
+                alert("开始时间不能大于等于结束时间");
+                return;
+            }
+
+            var newCode = null;
+
+            var stockSign = document.getElementById("stockSign").value;
+            var focus = null;
+            if(parseInt(stockSign) === 1){
+                focus = "1";
+            }
+            var industrySearch = document.getElementById("industrySearch");
+            var industrySearchValue = industrySearch.options[industrySearch.selectedIndex].text;
+
+            var stockParameter = {};
+            stockParameter.code = code;
+            stockParameter.isFocus = focus;
+            if( 0 !== parseInt(industrySearch.selectedIndex)){
+                stockParameter.industry = industrySearchValue;
+            }
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "query/stock/lastDetail",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
+                async:false,
+                data:JSON.stringify(stockParameter),
+                success:function (resJson){
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        newCode = resJson.msg.stockCode;
+                        updateStockDetail(resJson);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+
+            if(null === newCode){
+                return;
+            }
+
+            var computeParameter = {};
+            computeParameter.code = newCode;
+            computeParameter.startDate = startDate;
+            computeParameter.endDate = endDate;
+
+            var resJsonCompute = getComputeData(computeParameter);
+            updateTable(resJsonCompute,true);
 
         });
 
@@ -171,16 +332,30 @@
             }
 
             var newCode = null;
+
+            var stockSign = document.getElementById("stockSign").value;
+            var focus = null;
+            if(parseInt(stockSign) === 1){
+                focus = "1";
+            }
+            var industrySearch = document.getElementById("industrySearch");
+            var industrySearchValue = industrySearch.options[industrySearch.selectedIndex].text;
+
+            var stockParameter = {};
+            stockParameter.code = code;
+            stockParameter.isFocus = focus;
+            if( 0 !== parseInt(industrySearch.selectedIndex)){
+                stockParameter.industry = industrySearchValue;
+            }
+
             $.ajax({
                 url:globalConfig.remoteUlr + "query/stock/nextDetail",
-                type:"GET",
-                dataType:"text",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
                 async:false,
-                data:{
-                    code:code
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
+                data:JSON.stringify(stockParameter),
+                success:function (resJson){
                     if(resJson.status === false && resJson.msg === "未登录"){
                         window.location.href="index.html";
                         return;
@@ -201,112 +376,24 @@
                 return;
             }
 
-            $.ajax({
-                url:globalConfig.remoteUlr + "compute/compute",
-                type:"GET",
-                dataType:"text",
-                async:false,
-                data:{
-                    code:newCode,
-                    startDate:startDate,
-                    endDate:endDate
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
-                    if(resJson.status === false && resJson.msg === "未登录"){
-                        window.location.href="index.html";
-                        return;
-                    }
-                    if(resJson.status === true){
-                        updateTable(resJson,true)
-                        return;
-                    }else{
-                        alert("后端处理失败！");
-                        return;
-                    }
-                },
-                error:function (err){}
-            })
+            var computeParameter = {};
+            computeParameter.code = newCode;
+            computeParameter.startDate = startDate;
+            computeParameter.endDate = endDate;
+
+            var resJsonCompute = getComputeData(computeParameter);
+            updateTable(resJsonCompute,true);
+
         });
 
         //查询上一个
-        $("#last").click(function (){
+        $("#upLast").click(function (){
+            $("#last").click();
+        });
 
-            //获取处理输入信息
-            var code = document.getElementById("code").value;
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
-
-            if(null == code || "" === code){
-                alert("code不能为空");
-                return;
-            }else if(code.length !== 6){
-                alert("code长度必须为6");
-                return;
-            }
-
-            if(startDate >= endDate){
-                alert("开始时间不能大于等于结束时间");
-                return;
-            }
-
-            var newCode = null;
-            $.ajax({
-                url:globalConfig.remoteUlr + "query/stock/nextDetail",
-                type:"GET",
-                dataType:"text",
-                async:false,
-                data:{
-                    code:code
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
-                    if(resJson.status === false && resJson.msg === "未登录"){
-                        window.location.href="index.html";
-                        return;
-                    }
-                    if(resJson.status === true){
-                        newCode = resJson.msg.stockCode;
-                        updateStockDetail(resJson);
-                        return;
-                    }else{
-                        alert("后端处理失败！");
-                        return;
-                    }
-                },
-                error:function (err){}
-            })
-
-            if(null === newCode){
-                return;
-            }
-
-            $.ajax({
-                url:globalConfig.remoteUlr + "compute/compute",
-                type:"GET",
-                dataType:"text",
-                async:false,
-                data:{
-                    code:newCode,
-                    startDate:startDate,
-                    endDate:endDate
-                },
-                success:function (resData){
-                    const resJson = JSON.parse(resData);
-                    if(resJson.status === false && resJson.msg === "未登录"){
-                        window.location.href="index.html";
-                        return;
-                    }
-                    if(resJson.status === true){
-                        updateTable(resJson,true)
-                        return;
-                    }else{
-                        alert("后端处理失败！");
-                        return;
-                    }
-                },
-                error:function (err){}
-            })
+        //查询下一个
+        $("#upNext").click(function (){
+            $("#next").click();
         });
 
         //收藏
@@ -334,7 +421,7 @@
 
             $.ajax({
                 url:globalConfig.remoteUlr + "query/stock/isFocus",
-                type:"GET",
+                type:"POST",
                 dataType:"text",
                 async:false,
                 data:{
@@ -403,17 +490,37 @@
         <!-- 刷新表格内数据 -->
         function updateTable(resJson,isUpdate){
 
+            var myChart = echarts.init(document.getElementById('echartLine'));
+            var myQuoteChart = echarts.init(document.getElementById('echartQuoteLine'));
+
             if(isUpdate === true){
                 $("#resTable").find("tr:not(:first)").remove();
+                myChart.clear();
+                myQuoteChart.clear();
             }
 
             var tab = document.getElementById("resTable");
+
+            var xAxis = new Array();
+            var yAxisData = new Array();
+            var yAxisQuoteData = new Array();
+            var size = 0;
+
             for(var i in resJson.msg){
+
                 var tradd = tab.insertRow();
-                var colorSet = "#FF0000";
-                if(resJson.msg[i].quoteChange.indexOf('-') > -1){
+                var colorSet = "#FF5900FF";
+
+                if(parseFloat(resJson.msg[i].quoteChange) > 9.5){
+                    colorSet = "#FF0000";
+                }else if(parseFloat(resJson.msg[i].quoteChange) > 0){
+                    colorSet = "#EE00FFD7";
+                }else if(parseFloat(resJson.msg[i].quoteChange) > -9.5 ){
+                    colorSet = "#92D711FF";
+                }else{
                     colorSet = "#4dd711";
                 }
+
                 tradd.innerHTML=
                     '<td  align="right">' + resJson.msg[i].date + '</td><td  align="right" bgcolor="'+ colorSet +'">'
                     + resJson.msg[i].quoteChange + '</td><td align="right">'
@@ -424,7 +531,40 @@
                     + resJson.msg[i].marketData.turnover + '</td><td align="right">'
                     + resJson.msg[i].marketData.turnoverRate + '</td>';
                 //绿色：#4dd711 红色：#FF0000
+
+                xAxis[size] = resJson.msg[i].date;
+                yAxisData[size] = resJson.msg[i].transactionResults;
+                yAxisQuoteData[size] = resJson.msg[i].quoteChange;
+                size++;
             }
+
+            const option = {
+                title: {text: '走势图'},
+                tooltip: {},
+                legend: {data: ['结果']},
+                xAxis: {data: xAxis},
+                yAxis: {},
+                series: [{
+                    name: '结果',
+                    type: 'line',
+                    data: yAxisData
+                }]
+            };
+
+            const optionQuote = {
+                title: {text: '走势图'},
+                tooltip: {},
+                legend: {data: ['结果']},
+                xAxis: {data: xAxis},
+                yAxis: {},
+                series: [{
+                    name: '结果',
+                    type: 'line',
+                    data: yAxisQuoteData
+                }]
+            };
+            myChart.setOption(option);
+            myQuoteChart.setOption(optionQuote);
         }
 
         function updateStockDetail(resJson){
@@ -442,6 +582,35 @@
 
             document.getElementById("code").value = resJson.msg.stockCode;
 
+        }
+
+        function getComputeData(sParam){
+
+            var res = "";
+            $.ajax({
+                url:globalConfig.remoteUlr + "compute/compute",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
+                async:false,
+                data: JSON.stringify(sParam),
+                success:function (resJson){
+
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="index.html";
+                        return "";
+                    }
+                    if(resJson.status === true){
+                        res = resJson;
+                    }else{
+                        alert("后端处理失败！");
+                        return "";
+                    }
+                },
+                error:function (err){res = null}
+            })
+
+            return res;
         }
 
     });

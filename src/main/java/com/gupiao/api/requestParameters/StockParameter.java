@@ -13,4 +13,8 @@ public class StockParameter {
 
     private String pages;
 
+    private String order;
+
+    private String industry;
+
 }

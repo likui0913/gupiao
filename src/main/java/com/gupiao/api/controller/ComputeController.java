@@ -1,6 +1,7 @@
 package com.gupiao.api.controller;
 
 import com.google.gson.Gson;
+import com.gupiao.api.requestParameters.ComputeParameter;
 import com.gupiao.api.response.ResponseBean;
 import com.gupiao.bean.ComputeDailyBean;
 import com.gupiao.generator.domain.StockDetail;
@@ -23,7 +24,7 @@ public class ComputeController {
     @Autowired
     StockDetailMapper stockDetailMapper;
 
-    @RequestMapping(value="/test",method = RequestMethod.GET)
+    @RequestMapping(value="/test",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public Object test(@RequestParam("code") String code,
                        @RequestParam("startDate") String startDate,
@@ -54,7 +55,7 @@ public class ComputeController {
 
     }
 
-    @RequestMapping(value="/test2",method = RequestMethod.GET)
+    @RequestMapping(value="/test2",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public String test2(@RequestParam("code") String code,
                         @RequestParam("startDate") String startDate,
@@ -80,47 +81,17 @@ public class ComputeController {
         return resString;
     }
 
-    @RequestMapping(value="/next",method = RequestMethod.GET)
+    @RequestMapping(value="/compute",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
-    public Object next(@RequestParam("code") String code,
-                       @RequestParam("startDate") String startDate,
-                       @RequestParam("endDate") String endDate) {
-
-        ResponseBean bean = new ResponseBean();
-
-        StockDetail detail = stockDetailMapper.selectNextByCode(code);
-        if(null == detail){
-            bean.setStatus(Boolean.FALSE);
-            bean.setMsg("未找到下一个code！");
-            return new Gson().toJson(bean);
-        }
-        List<ComputeDailyBean> res = transactionPlaybackService.computeTransactionPlayback(detail.getStockCode(),startDate,endDate);
-
-        bean.setStatus(Boolean.TRUE);
-        bean.setMsg(res);
-
-        return new Gson().toJson(bean);
-
-        /*
-        Integer rise=0,decline=0,flat=0;
-        for (ComputeDailyBean bean:res) {
-            if(bean.getQuoteChange().contains("-")){
-                decline++;
-            }else{
-                rise++;
-            }
-        }
-        resString = resString + "上:" + rise + ",下:" + decline + "<br>";
-         */
-
-    }
-
-    @RequestMapping(value="/compute",method = RequestMethod.GET)
-    @ResponseBody
-    public Object compute(@RequestParam("code") String code,
-                       @RequestParam("startDate") String startDate,
-                       @RequestParam("endDate") String endDate) {
-        List<ComputeDailyBean> res = transactionPlaybackService.computeTransactionPlayback(code,startDate,endDate);
+    public Object compute( @RequestBody ComputeParameter computeParameter
+                          //@RequestParam("code") String code,
+                          //@RequestParam("startDate") String startDate,
+                          //@RequestParam("endDate") String endDate
+    ) {
+        List<ComputeDailyBean> res = transactionPlaybackService.computeTransactionPlayback(
+                computeParameter.getCode(),
+                computeParameter.getStartDate(),
+                computeParameter.getEndDate());
 
         ResponseBean bean = new ResponseBean();
         bean.setStatus(Boolean.TRUE);

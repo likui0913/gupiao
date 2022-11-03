@@ -1,19 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>数据分析平台</title>
 </head>
+
 <body>
 
 <!-- 搜索框 -->
 <div>
-    搜索:<input id="param" value="000417">
+    搜索:<input id="stockCode" value="000417">
+    标记:<select id="stockSign" value="0">
+        <option value="0">无</option>
+        <option value="1">收藏</option>
+    </select>
+    行业:<select id="industrySearch" value="0">
+            <option value="0">无</option>
+            <option value="1">银行</option>
+            <option value="2">房地产开发</option>
+            <option value="3">软件开发</option>
+            <option value="4">环保行业</option>
+            <option value="5">房地产服务</option>
+            <option value="6">交运设备</option>
+            <option value="7">综合行业</option>
+            <option value="8">工程建设</option>
+            <option value="9">玻璃玻纤</option>
+            <option value="10">家电行业</option>
+            <option value="11">贸易行业</option>
+            <option value="12">光学光电子</option>
+            <option value="13">消费电子</option>
+            <option value="14">水泥建材</option>
+            <option value="15">汽车服务</option>
+            <option value="16">珠宝首饰</option>
+            <option value="17">电力行业</option>
+            <option value="18">医药商业</option>
+            <option value="19">汽车零部件</option>
+            <option value="20">通信设备</option>
+            <option value="21">计算机设备</option>
+            <option value="22">文化传媒</option>
+            <option value="23">通用设备</option>
+            <option value="24">多元金融</option>
+            <option value="25">电池</option>
+            <option value="26">装修装饰</option>
+            <option value="27">商业百货</option>
+            <option value="28">石油行业</option>
+            <option value="29">有色金属</option>
+            <option value="30">电子元件</option>
+            <option value="31">航运港口</option>
+            <option value="32">航空机场</option>
+            <option value="33">医疗服务</option>
+            <option value="34">化学制药</option>
+            <option value="35">工程机械</option>
+            <option value="36">证券</option>
+            <option value="37">化纤行业</option>
+            <option value="38">电网设备</option>
+            <option value="39">生物制品</option>
+            <option value="40">燃气</option>
+            <option value="41">化肥行业</option>
+            <option value="42">互联网服务</option>
+            <option value="43">化学原料</option>
+            <option value="44">中药</option>
+            <option value="45">旅游酒店</option>
+            <option value="46">铁路公路</option>
+            <option value="47">造纸印刷</option>
+            <option value="48">农牧饲渔</option>
+            <option value="49">贵金属</option>
+            <option value="50">专用设备</option>
+            <option value="51">美容护理</option>
+            <option value="52">农药兽药</option>
+            <option value="53">教育</option>
+            <option value="54">食品饮料</option>
+            <option value="55">公用事业</option>
+            <option value="56">汽车整车</option>
+            <option value="57">煤炭行业</option>
+            <option value="58">物流行业</option>
+            <option value="59">化学制品</option>
+            <option value="60">酿酒行业</option>
+            <option value="61">橡胶制品</option>
+            <option value="62">装修建材</option>
+            <option value="63">保险</option>
+            <option value="64">钢铁行业</option>
+            <option value="65">小金属</option>
+            <option value="66">包装材料</option>
+            <option value="67">半导体</option>
+            <option value="68">航天航空</option>
+            <option value="69">医疗器械</option>
+            <option value="70">纺织服装</option>
+            <option value="71">采掘行业</option>
+            <option value="72">工程咨询服务</option>
+            <option value="73">塑料制品</option>
+            <option value="74">通信服务</option>
+            <option value="75">电机</option>
+            <option value="76">家用轻工</option>
+            <option value="77">仪器仪表</option>
+            <option value="78">非金属材料</option>
+            <option value="79">专业服务</option>
+            <option value="80">游戏</option>
+            <option value="81">光伏设备</option>
+            <option value="82">能源金属</option>
+            <option value="83">风电设备</option>
+            <option value="84">电源设备</option>
+            <option value="85">电子化学品</option>
+            <option value="86">船舶制造</option>
+    </select>
+    <br>
     <button id="query">查询</button>
     <button id="up_page">上一页</button>
     <button id="down_page">下一页</button>
+    <button id="clean">清除</button>
 </div>
-
+<hr>
 <!-- 展示内容 -->
 <div>
     <table id="resTable" border="1" cellspacing="0">
@@ -38,15 +135,38 @@
         $("#query").click(function (){
 
             showPages = 0;
-            var param = document.getElementById("param").value;
+            var stockCode = document.getElementById("stockCode").value;
+            var stockSign = document.getElementById("stockSign").value;
+            var focus = null;
+            if(parseInt(stockSign) === 1){
+                focus = "1";
+            }
+            var industrySearch = document.getElementById("industrySearch");
+            var industrySearchValue = industrySearch.options[industrySearch.selectedIndex].text;
 
-            var resJson = queryData(param,0);
+            var stockParameter = {};
+            stockParameter.code = stockCode;
+            stockParameter.pages = 0;
+            stockParameter.isFocus = focus;
+            if( 0 !== parseInt(industrySearch.selectedIndex)){
+                stockParameter.industry = industrySearchValue;
+            }
+
+            var resJson = queryData(stockParameter);
             updateTab(resJson,true);
         });
 
         $("#up_page").click(function (){
 
-            var param = document.getElementById("param").value;
+            var stockCode = document.getElementById("stockCode").value;
+            var stockSign = document.getElementById("stockSign").value;
+            var focus = null;
+            if(parseInt(stockSign) === 1){
+                focus = "1";
+            }
+            var industrySearch = document.getElementById("industrySearch");
+            var industrySearchValue = industrySearch.options[industrySearch.selectedIndex].text;
+
 
             if(showPages < 1){
                 showPages = 0;
@@ -54,39 +174,73 @@
                 showPages--;
             }
 
-            var resJson = queryData(param,showPages);
+            var stockParameter = {};
+            stockParameter.code = stockCode;
+            stockParameter.pages = showPages;
+            stockParameter.isFocus = focus;
+            if( 0 !== parseInt(industrySearch.selectedIndex)){
+                stockParameter.industry = industrySearchValue;
+            }
+
+            var resJson = queryData( stockParameter );
             updateTab(resJson,true);
         });
 
         $("#down_page").click(function (){
 
-            var param = document.getElementById("param").value;
-
+            var stockCode = document.getElementById("stockCode").value;
+            var stockSign = document.getElementById("stockSign").value;
+            var focus = null;
+            if(parseInt(stockSign) === 1){
+                focus = "1";
+            }
             showPages++;
+            var industrySearch = document.getElementById("industrySearch");
+            var industrySearchValue = industrySearch.options[industrySearch.selectedIndex].text;
 
-            var resJson = queryData(param,showPages);
+
+            var stockParameter = {};
+            stockParameter.code = stockCode;
+            stockParameter.pages = showPages;
+            stockParameter.isFocus = focus;
+            if( 0 !== parseInt(industrySearch.selectedIndex)){
+                stockParameter.industry = industrySearchValue;
+            }
+
+            var resJson = queryData( stockParameter );
             updateTab(resJson,true);
 
         });
 
-        function queryData(param,pages){
+        $("#clean").click(function (){
+
+            showPages = 0;
+            document.getElementById("stockCode").value = "";
+            document.getElementById("stockSign").value = "0";
+            document.getElementById("industrySearch").value = "0";
+
+        });
+
+        function queryData(stockParameter){
 
             var res;
+
             $.ajax({
-                //url:globalConfig.remoteUlr + "query/stock",
-                url:globalConfig.remoteUlr + "query/stock",
-                type:"GET",
-                dataType:"text",
+                url:globalConfig.remoteUlr + "query/stockDetailList",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
                 async:false,
-                data:{
-                    param:param,
-                    pages:pages
-                },
-                success:function (resData){
-                    res = JSON.parse(resData);
-                    if(res.status === false && res.msg === "未登录"){
+                data:JSON.stringify(stockParameter),
+                success:function (resJson){
+                    if(resJson.status === false && resJson.msg === "未登录"){
                         window.location.href="index.html";
                         return;
+                    }
+                    if(resJson.status === true){
+                        res = resJson.msg;
+                    }else{
+                        alert("stockDetailList 查询出错！")
                     }
                 },
                 error:function (err){}
@@ -108,7 +262,6 @@
                 newRow.insertCell(2).innerHTML = res[i].industry;
                 if(res[i].focus === 0){
                     newRow.insertCell(3).innerHTML = "无"; //00A6FFFF
-                    newRow.insertCell(3).setAttribute("")
                 }else{
                     newRow.insertCell(3).innerHTML = "收藏";
                 }
@@ -151,4 +304,5 @@
 </script>
 
 </body>
+
 </html>

@@ -38,7 +38,8 @@ public enum ApiUrlPath {
     STOCK_US_SPOT_EM("api/public/stock_us_spot_em","获取美股全部股票信息"),
     STOCK_US_HIST("api/public/stock_us_hist","获取美股的交易记录"),
     STOCK_DZJY_SCTJ("api/public/stock_dzjy_sctj","上证指数信息"),
-
+    STOCK_HSGT_NORTH_NET_FLOW("api/public/stock_hsgt_north_net_flow_in_em","北向净流入"),
+    STOCK_HSGT_SOUTH_NET_FLOW("api/public/stock_hsgt_south_net_flow_in_em","南向净流入"),
     ;
 
 
