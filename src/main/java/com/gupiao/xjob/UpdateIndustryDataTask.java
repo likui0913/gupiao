@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
- * 更新全量行业交易数据  industry_transactions
+ * 更新全量行业交易数据定时任务
  */
 @Configuration //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling //2.开启定时任务

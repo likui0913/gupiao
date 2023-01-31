@@ -76,7 +76,7 @@ public class UpdateFullStockUpdateTask {
             this.getAllStock();
             log.info("完成刷新全部股票基础信息,date:" + LocalDateTime.now());
         }catch (Exception e){
-
+            log.error("刷新全部股票基础信息出现错误！！！",e);
         }
     }
 

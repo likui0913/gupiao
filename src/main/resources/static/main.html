@@ -11,11 +11,15 @@
 
 <body>
 <div>
-  <button id="getAll">全部</button>
-  <button id="compute">计算</button>
-  <button id="examination">试算</button>
-    <button id="netFlow">流向</button>
-  <button id="clean">退出</button>
+    <button id="getAll" style="width:120px;height:40px;">全部</button>
+    <button id="compute" style="width:120px;height:40px;">计算</button>
+    <button id="examination" style="width:120px;height:40px;">试算</button>
+    <button id="netFlow" style="width:120px;height:40px;">流向</button>
+    <br>
+    <button id="readBoke" style="width:120px;height:40px;">阅读博客</button>
+    <button id="addBoke" style="width:120px;height:40px;">添加博客</button>
+    <br>
+    <button id="clean" style="width:120px;height:40px;">退出</button>
 </div>
 
 <script type="text/javascript">
@@ -48,6 +52,18 @@
       //收藏
       $("#netFlow").click(function (){
           window.location.href="netflow.html";
+          return;
+      });
+
+      //收藏
+      $("#addBoke").click(function (){
+          window.location.href="boke/addBoke.html";
+          return;
+      });
+
+      //收藏
+      $("#readBoke").click(function (){
+          window.location.href="boke/bokeShow.html";
           return;
       });
 

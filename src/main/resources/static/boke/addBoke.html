@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery.param.min.js"></script>
+<script type="text/javascript" src="../js/config.js"></script>
+<script type="text/javascript" src="../js/echarts.min.js"></script>
+
+
+<body>
+
+<div>
+    唯一ID:<input id="mainID" value="" readonly="readonly"><br>
+    博客类型ID:<input id="type" value="1"><br>
+    博客名称:<input id="name" value=""><br>
+    博客备注:<input id="des" value="无"><br>
+    博客内容:<textarea id="content" value="" style="width: 1000px; height: 424px;"></textarea><br>
+    <button id="add" style="width:120px;height:40px;">添加</button>
+    <br>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+
+        //计算详细信息
+        $("#add").click(function (){
+
+            //获取处理输入信息
+            var type = document.getElementById("type").value;
+            var name = document.getElementById("name").value;
+            var des = document.getElementById("des").value;
+            var content = document.getElementById("content").value;
+
+            if(null == name || "" === name){
+                alert("name不能为空");
+                return;
+            }else if(null == content || "" === content){
+                alert("content不能为空");
+                return;
+            }
+
+
+            //构建查询参数
+            var bokeParam = {}
+            bokeParam.titleType = type
+            bokeParam.titleId = 1
+            bokeParam.titleName = name
+            bokeParam.titleDetail = content
+            bokeParam.des = des
+
+            $.ajax({
+                url:globalConfig.remoteUlr + "boke/add",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
+                async:false,
+                data: JSON.stringify(bokeParam),
+                success:function (resJson){
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="../index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        updateStockDetail(resJson);
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+            alert("添加成功")
+            document.getElementById('name').value = "";
+            document.getElementById('content').value = "";
+        });
+    });
+</script>
+</body>
+</html>

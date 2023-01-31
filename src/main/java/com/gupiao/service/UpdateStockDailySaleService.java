@@ -42,7 +42,7 @@ public class UpdateStockDailySaleService {
         Integer updateCount = 0,jumpCount = 0,errorCount = 0;
         for (StockDetail sd:localAllStock) {
             try {
-                log.info("updateAllStockDailySale 处理code:" + sd.getStockCode());
+                //log.info("updateAllStockDailySale 处理code:" + sd.getStockCode());
                 Integer s = this.updateStockDailySaleByCode(sd);
                 if(0==s){
                     updateCount++;
@@ -104,6 +104,7 @@ public class UpdateStockDailySaleService {
         this.insertStockSaleDataToDb(stockMarketDataList);
         setting.setSysValue(endDateNow);
         this.updateStockDailySettingByCode(setting);
+        Thread.sleep(1000*2);
         return 0;
 
     }
@@ -148,6 +149,7 @@ public class UpdateStockDailySaleService {
         params.put("END_DATE", endDate.replace("-",""));
         log.info("params:{},url:{}",params,ApiUrlPath.STOCK_ZH_A_HIST);
         String res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_HIST, params);
+        log.info("params:{},url:{},res.length:{}",params,ApiUrlPath.STOCK_ZH_A_HIST,res.length());
         List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
         List<StockMarketData> records = new LinkedList<>();
         for (Map<String,String> map: resList) {

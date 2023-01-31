@@ -6,6 +6,7 @@ import com.gupiao.bean.api.StockCode;
 import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.domain.StockMarketXMovingAverage;
+import com.gupiao.generator.domain.SysSetting;
 import com.gupiao.generator.mapper.*;
 import com.gupiao.service.thread.StockMarketDataThread;
 import com.gupiao.util.DateUtils;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,28 @@ public class StatisticService {
     @Autowired
     StockMarketXMovingAverageMapper stockMarketXMovingAverageMapper;
 
+    @Autowired
+    StockDailyAverageDataMapper stockDailyAverageDataMapper;
+
+    /**
+     * 计算股票的xDailyPrice
+     */
+    public void computeXDaiyPrice(){
+
+        //获取需要计算的天数信息
+        SysSetting setting = sysSettingMapper.selectByCode("statistic_daily_list");
+        List<String> days = Arrays.asList(setting.getSysValue().split(","));
+        List<Integer> daysInt = new LinkedList<>();
+        for (String d:days) {
+            daysInt.add(Integer.valueOf(d));
+        }
+
+        //获取需要计算的股票信息
+
+
+    }
+
+/**以下代码不用**************************************************************************/
     public void cpmputeAllStackMovingAverage(){
 
         String res;

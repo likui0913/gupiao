@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * 更新全量股票基础信息，包含股票code，名称 表stock_detail
+ * 清理过期session信息
  */
 @Configuration //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling //2.开启定时任务

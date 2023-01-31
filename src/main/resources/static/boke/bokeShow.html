@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery.param.min.js"></script>
+<script type="text/javascript" src="../js/config.js"></script>
+<script type="text/javascript" src="../js/echarts.min.js"></script>
+
+<body>
+
+<h1 id="bokeTitle"></h1>
+
+<div id="bokeContent">
+
+</div>
+
+<div>
+  <button id="last" style="width:120px;height:40px;">上一个</button>
+  <button id="next" style="width:120px;height:40px;">下一个</button>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function (){
+
+        var id = 1;
+        init();
+
+        //计算详细信息
+        $("#last").click(function (){
+            if(id === 1){
+                return;
+            }
+            showBoke(id-1);
+        });
+
+        //计算详细信息
+        $("#next").click(function (){
+            showBoke(id+1);
+        });
+
+        //页面显示
+        function init(){
+            showBoke(1);
+        };
+
+        //展示指定
+        function showBoke(showId){
+
+            if(null === showId){
+                alert("博客ID不能为null");
+                return;
+            }
+
+            //根据id获取博客内容
+            var bokeParam = {}
+            bokeParam.id = showId
+            var resBoke;
+            $.ajax({
+                url:globalConfig.remoteUlr + "boke/getDetail",
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json;charset=utf8",
+                async:false,
+                data: JSON.stringify(bokeParam),
+                success:function (resJson){
+                    if(resJson.status === false && resJson.msg === "未登录"){
+                        window.location.href="../index.html";
+                        return;
+                    }
+                    if(resJson.status === true){
+                        if(null === resJson.bokeDetail){
+                            alert("根据ID=" + showId + "未查询到博客内容");
+                            return;
+                        }
+                        resBoke = resJson.msg;
+                        return;
+                    }else{
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error:function (err){}
+            })
+            //显示博客内容
+            if(typeof(resBoke) == "undefined" || null === resBoke || null === resBoke.titleDetail){
+                return;
+            }
+            var resArr = resBoke.titleDetail.split('\n');
+            var htmlMsg = "";
+            for (let i = 0; i < resArr.length; ++i){
+                htmlMsg = htmlMsg + "<div><font size=\"3\">&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>" +
+                    resArr[i] +
+                    "</font></div>" +
+                    "<div>&nbsp;<wbr></div>";//换行
+            }
+
+            id=resBoke.id;
+            //获取显示组件，增加显示内容
+            document.getElementById('bokeTitle').innerHTML = resBoke.titleName;
+            document.getElementById('bokeContent').innerHTML = htmlMsg;
+
+        };
+
+    });
+</script>
+
+</body>
+</html>

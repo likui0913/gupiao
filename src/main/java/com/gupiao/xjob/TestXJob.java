@@ -7,8 +7,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Configuration //1.主要用于标记配置类，兼备Component的效果。
-@EnableScheduling //2.开启定时任务
+/**
+ * 测试定时任务执行
+ */
+@Configuration
+@EnableScheduling
 public class TestXJob {
 
     ReentrantLock lock = new ReentrantLock();

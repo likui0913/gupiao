@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>试算</title>
+</head>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.param.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+
+<body>
+
+<!-- 输入框 -->
+<div>
+    编码:<input id="code" value=""><br>
+    开始时间:<input id="startDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31">
+    结束时间:<input id="endDate" type="date" name="trip-start" value="2022-05-01" min="2000-01-01" max="2050-12-31"><br>
+    买入价格:<input id="buyPrice" value=""><br>
+    卖出盈利百分比:<input id="sellPercent" value="5">%<br>
+    连跌次数买入:<input id="buy_count" value="4">次<br>
+    <button id="compute">试算</button>
+    <br>
+</div>
+
+</body>
+</html>

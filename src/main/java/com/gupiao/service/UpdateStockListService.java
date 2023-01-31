@@ -43,7 +43,7 @@ public class UpdateStockListService {
         log.info("开始更新全部股票的基础信息");
         Long startTime = System.currentTimeMillis();
         Map<String,StockDetail> localAllStock = this.getLocalAllStock();
-        log.info("更新全部股票信息，获取本地全部股票信息，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒");
+        log.info("更新全部股票信息，获取本地全部股票信息，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒,获取股票数量：" + localAllStock.size() + "个。");
         updateChinaStockMsg(localAllStock);
         log.info("更新全部股票信息，处理中国全部股票，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒");
         updateUSAStockMsg(localAllStock);
@@ -57,12 +57,12 @@ public class UpdateStockListService {
     public void updateChinaStockMsg(Map<String,StockDetail> localAllStock){
 
         List<StockCode> allRemoteChinaStock = this.getRemoteChinaAllStock();
-        StockDetail dbStock = null;
 
         int updateCount = 0,insertCount = 0,errorCount=0;
-
+        log.info("接口获取中国全部股票信息数量:" + allRemoteChinaStock.size());
         for (StockCode code:allRemoteChinaStock) {
 
+            StockDetail dbStock = null;
             //查找在数据库内是否都存在对应股票信息
             if(localAllStock.containsKey(code.getCode())){
                 dbStock = localAllStock.get(code.getCode());
@@ -81,6 +81,7 @@ public class UpdateStockListService {
                 insertCount++;
                 StockDetail stockDetail = getChinaStockDetailByCode(code.getCode());
                 stockDetail.setStockType(0);
+                log.info("新增股票:" + stockDetail.getStockCode());
                 this.insertNewStock(stockDetail);
             }
         }
@@ -118,6 +119,7 @@ public class UpdateStockListService {
                 stockDetail.setMarketTime("");
                 stockDetail.setCirculatingCapitalization((double) 0);
                 stockDetail.setTotalCapitalization((double) 0);
+                stockDetail.setIsFocus(0);
                 this.insertNewStock(stockDetail);
             }
         }
@@ -132,6 +134,7 @@ public class UpdateStockListService {
     public Map<String,StockDetail> getLocalAllStock(){
         Map<String,StockDetail> res = new HashMap<>();
         List<StockDetail> dbRes = stockDetailMapper.selectAll();
+        log.info("dbRes size is " + dbRes.size());
         for (StockDetail sd:dbRes) {
             res.put(sd.getStockCode(),sd);
         }
