@@ -5,12 +5,14 @@ import com.google.gson.reflect.TypeToken;
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.bean.api.StockMsg;
 import com.gupiao.enums.ApiUrlPath;
+import com.gupiao.enums.LogSwitchEnums;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.util.BeanTransformation;
+import com.gupiao.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,15 +42,15 @@ public class UpdateStockListService {
      * 更新全部股票信息
      */
     public void updateAllStockMsg(){
-        log.info("开始更新全部股票的基础信息");
+        log.info("开始更新全部Coede的基础信息");
         Long startTime = System.currentTimeMillis();
         Map<String,StockDetail> localAllStock = this.getLocalAllStock();
-        log.info("更新全部股票信息，获取本地全部股票信息，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒,获取股票数量：" + localAllStock.size() + "个。");
+        log.info("更新全部Code信息，获取本地全部Code信息，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒,获取股票数量：" + localAllStock.size() + "个。");
         updateChinaStockMsg(localAllStock);
-        log.info("更新全部股票信息，处理中国全部股票，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒");
+        log.info("更新全部Code信息，处理中国全部Code，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒");
         updateUSAStockMsg(localAllStock);
         Long endTime = System.currentTimeMillis();
-        log.info("更新全部股票信息完成，花费 " + (endTime-startTime)/1000 + " 秒");
+        log.info("更新全部Code信息完成，花费 " + (endTime-startTime)/1000 + " 秒");
     }
 
     /**
@@ -59,7 +61,7 @@ public class UpdateStockListService {
         List<StockCode> allRemoteChinaStock = this.getRemoteChinaAllStock();
 
         int updateCount = 0,insertCount = 0,errorCount=0;
-        log.info("接口获取中国全部股票信息数量:" + allRemoteChinaStock.size());
+        log.info("接口获取中国全部Code信息数量:" + allRemoteChinaStock.size());
         for (StockCode code:allRemoteChinaStock) {
 
             StockDetail dbStock = null;
@@ -68,20 +70,24 @@ public class UpdateStockListService {
                 dbStock = localAllStock.get(code.getCode());
             }
 
+            StockDetail stockDetail = getChinaStockDetailByCode(code.getCode());
             if(dbStock != null){
                 //更新
-                /*
                 updateCount++;
                 stockDetail.setStockType(dbStock.getStockType());
                 stockDetail.setId(dbStock.getId());
                 this.updateStock(stockDetail);
-                 */
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_MSG.getName(), Boolean.FALSE)){
+                    log.info("更新Code:" + stockDetail.getStockCode());
+                }
             }else {
                 //新增
                 insertCount++;
-                StockDetail stockDetail = getChinaStockDetailByCode(code.getCode());
                 stockDetail.setStockType(0);
-                log.info("新增股票:" + stockDetail.getStockCode());
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_MSG.getName(), Boolean.FALSE)){
+                    log.info("新增Code:" + stockDetail.getStockCode());
+                }
+
                 this.insertNewStock(stockDetail);
             }
         }
@@ -174,7 +180,7 @@ public class UpdateStockListService {
         detail = BeanTransformation.createStockDetailFromList(detailStock);
         return detail;
         }catch (Throwable t){
-            log.error("getChinaStockDetailByCode 获取中国股票详细信息出错！",t);
+            log.error("getChinaStockDetailByCode 获取中国Code详细信息出错！",t);
             return null;
         }
 
@@ -215,7 +221,7 @@ public class UpdateStockListService {
      * @param sd
      */
     public void updateStock(StockDetail sd){
-        //stockDetailMapper.updateById(sd);
+        stockDetailMapper.updateById(sd);
     }
 
 }

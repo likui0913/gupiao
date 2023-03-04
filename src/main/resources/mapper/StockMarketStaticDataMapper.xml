@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockMarketStaticDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockMarketStaticData">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="days" column="days" jdbcType="INTEGER"/>
+            <result property="closingPriceDiff" column="closing_price_diff" jdbcType="DECIMAL"/>
+            <result property="upDays" column="up_days" jdbcType="INTEGER"/>
+            <result property="downDays" column="down_days" jdbcType="INTEGER"/>
+            <result property="tradeCount" column="trade_count" jdbcType="INTEGER"/>
+            <result property="allTurnover" column="all_turnover" jdbcType="DECIMAL"/>
+            <result property="turnoverRateAvg" column="turnover_rate_avg" jdbcType="DECIMAL"/>
+    </resultMap>
+    <!-- stock_market_static_data -->
+    <sql id="Base_Column_List">
+        id,stock_code,trade_date,days,closing_price_diff,up_days,down_days,trade_count,all_turnover,turnover_rate_avg
+    </sql>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,days,closing_price_diff,up_days,down_days,trade_count,all_turnover,turnover_rate_avg
+        from stock_market_static_data
+        where stock_code = #{code,jdbcType=VARCHAR} and trade_date = #{tradeDate,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectMaxDate" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,days,closing_price_diff,up_days,down_days,trade_count,all_turnover,turnover_rate_avg
+        from stock_market_static_data
+        where stock_code = #{code,jdbcType=VARCHAR}
+        order by trade_date desc limit 1
+    </select>
+
+    <select id="selectByParameter" resultMap="BaseResultMap">
+        select smsd.id,smsd.stock_code,smsd.trade_date,smsd.days,smsd.closing_price_diff,smsd.up_days,down_days,
+            smsd.trade_count,smsd.all_turnover,smsd.turnover_rate_avg
+        from stock_market_static_data smsd
+            left join stock_detail sd on sd.stock_code = smsd.stock_code
+            left join stock_market_data smd on smd.stock_code = smsd.stock_code and smd.trade_date = #{tradeDate,jdbcType=VARCHAR}
+        where smsd.trade_date = #{tradeDate,jdbcType=VARCHAR} and smsd.days = #{days,jdbcType=VARCHAR} and sd.stock_name not like "%ST%"
+        <if test=" startPrice != null and startPrice != ' '">
+            and smd.closing_price >= #{startPrice,jdbcType=DECIMAL}
+        </if>
+        <if test=" endPrice != null and endPrice != ' '">
+            and smd.closing_price &lt;= #{endPrice,jdbcType=DECIMAL}
+        </if>
+        order by
+
+        <if test=' trendSort == "up_days asc"'>
+            up_days asc,
+        </if>
+
+        <if test=' trendSort == "down_days asc"'>
+            down_days asc,
+        </if>
+
+        <if test=' trendSort == "up_days desc"'>
+            up_days desc,
+        </if>
+
+        <if test=' trendSort == "down_days desc"'>
+            down_days desc,
+        </if>
+
+        <if test=' priceDiffSort == "asc"'>
+            closing_price_diff asc,
+        </if>
+        <if test=' priceDiffSort == "desc"'>
+            closing_price_diff desc,
+        </if>
+        <if test=' turnoverAvgSort == "asc"'>
+            turnover_rate_avg asc,
+        </if>
+        <if test=' turnoverAvgSort == "desc"'>
+            turnover_rate_avg desc,
+        </if>
+        id desc
+        limit #{limited,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockMarketStaticData" useGeneratedKeys="true">
+        insert into stock_market_static_data(
+            stock_code,trade_date,days,closing_price_diff,up_days,
+            down_days,trade_count,all_turnover,turnover_rate_avg)
+        values(
+                  #{stockCode,jdbcType=VARCHAR},
+                  #{tradeDate,jdbcType=VARCHAR},
+                  #{days,jdbcType=INTEGER},
+                  #{closingPriceDiff,jdbcType=DECIMAL},
+                  #{upDays,jdbcType=INTEGER},
+                  #{downDays,jdbcType=INTEGER},
+                  #{tradeCount,jdbcType=INTEGER},
+                  #{allTurnover,jdbcType=DECIMAL},
+                  #{turnoverRateAvg,jdbcType=DECIMAL}
+               )
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.gupiao.generator.domain.StockMarketStaticData" useGeneratedKeys="true">
+        insert into stock_market_static_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            static_data(
+            stock_code,trade_date,days,closing_price_diff,up_days,
+            down_days,trade_count,all_turnover,turnover_rate_avg
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            <trim suffixOverrides=",">
+                #{item.stockCode,jdbcType=VARCHAR},
+                #{item.tradeDate,jdbcType=VARCHAR},
+                #{item.days,jdbcType=INTEGER},
+                #{item.closingPriceDiff,jdbcType=DECIMAL},
+                #{item.upDays,jdbcType=INTEGER},
+                #{item.downDays,jdbcType=INTEGER},
+                #{item.tradeCount,jdbcType=INTEGER},
+                #{item.allTurnover,jdbcType=DECIMAL},
+                #{item.turnoverRateAvg,jdbcType=DECIMAL}
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+</mapper>

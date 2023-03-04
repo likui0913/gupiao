@@ -24,7 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Configuration //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling //2.开启定时任务
 @Slf4j
-@EnableAsync
 public class UpdateFullStockUpdateTask {
 
     @Autowired
@@ -42,19 +41,18 @@ public class UpdateFullStockUpdateTask {
     ReentrantLock lock = new ReentrantLock();
 
     @Scheduled(fixedDelay = 1000*60*30)
-    @Async
     public void updateStockSaleData(){
         try{
-            log.info("开始增量刷新全部股票历史交易信息,date:" + LocalDateTime.now());
+            log.info("开始增量刷新全部Code历史交易信息,date:" + LocalDateTime.now());
 
             SysSetting setting = sysSettingMapper.selectByCode("updateStockSaleDataIsOn");
             if(null == setting || "0".equals(setting.getSysValue())) {
-                log.info("配置未开启,结束增量刷新全部股票历史交易信息");
+                log.info("配置未开启,结束增量刷新全部Code历史交易信息");
                 return;
             }
 
             updateStockDailySaleService.updateAllStockDailySale();
-            log.info("结束增量刷新全部股票历史交易信息,date:" + LocalDateTime.now());
+            log.info("结束增量刷新全部Code历史交易信息,date:" + LocalDateTime.now());
         }catch (Exception e){
             log.error("updateStockSaleData 出现错误！",e);
         }
@@ -62,26 +60,31 @@ public class UpdateFullStockUpdateTask {
 
     //每个6个小时更新1次
     @Scheduled(fixedDelay = 1000*60*60*6)
-    @Async
     public void updateAllStockMsg(){
         try{
-            log.info("开始刷新全部股票基础信息,date:" + LocalDateTime.now());
 
-            SysSetting setting = sysSettingMapper.selectByCode("updateAllStockMsgIsOn");
-            if(null == setting || "0".equals(setting.getSysValue())) {
-                log.info("配置未开启,完成刷新全部股票基础信息");
+            log.info("开始刷新全部Code基础信息,date:" + LocalDateTime.now());
+
+            //为了避免出问题，只在后半夜执行
+            LocalDateTime now = LocalDateTime.now();
+            int hour = now.getHour();
+            if(hour > 6){
+                log.info("退出刷新全部Code基础信息，时间不符合要求,date:" + LocalDateTime.now());
                 return;
             }
-
+            SysSetting setting = sysSettingMapper.selectByCode("updateAllStockMsgIsOn");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,完成刷新全部Code基础信息");
+                return;
+            }
             this.getAllStock();
-            log.info("完成刷新全部股票基础信息,date:" + LocalDateTime.now());
+            log.info("完成刷新全部Code基础信息,date:" + LocalDateTime.now());
         }catch (Exception e){
-            log.error("刷新全部股票基础信息出现错误！！！",e);
+            log.error("刷新全部Code基础信息出现错误！！！",e);
         }
     }
 
     @Scheduled(fixedDelay = 1000*60*30)
-    @Async
     public void updateStockMoneyFlowDate(){
         try{
 
@@ -95,6 +98,10 @@ public class UpdateFullStockUpdateTask {
 
     private void getAllStock(){
         updateAllStockMsg.updateAllStockMsg();
+    }
+
+    public static void main(String[] args) {
+
     }
 
 }

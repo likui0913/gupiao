@@ -1,6 +1,5 @@
 package com.gupiao.generator.mapper;
 
-import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,6 +25,11 @@ public interface StockMarketDataMapper {
             @Param("tradeDate") String tradeDate);
 
     List<StockMarketData> selectByCodeAndTwoDate(
+            @Param("code") String code,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate);
+
+    List<StockMarketData> selectByCodeAndTwoDateDesc(
             @Param("code") String code,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate);

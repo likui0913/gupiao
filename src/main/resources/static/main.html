@@ -15,6 +15,7 @@
     <button id="compute" style="width:120px;height:40px;">计算</button>
     <button id="examination" style="width:120px;height:40px;">试算</button>
     <button id="netFlow" style="width:120px;height:40px;">流向</button>
+    <button id="staticNDayData" style="width:120px;height:40px;">N天统计</button>
     <br>
     <button id="readBoke" style="width:120px;height:40px;">阅读博客</button>
     <button id="addBoke" style="width:120px;height:40px;">添加博客</button>
@@ -23,53 +24,58 @@
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function (){
+    $(document).ready(function () {
 
-    //收藏
-    $("#getAll").click(function (){
-      window.location.href="all.html";
-        return;
+        //收藏
+        $("#getAll").click(function () {
+            window.location.href = "all.html";
+            return;
+        });
+
+        //收藏
+        $("#compute").click(function () {
+            window.location.href = "compute.html";
+            return;
+        });
+
+        //收藏
+        $("#examination").click(function () {
+            window.location.href = "examination.html";
+            return;
+        });
+
+        //收藏
+        $("#clean").click(function () {
+            window.location.href = "index.html";
+            return;
+        });
+
+        //收藏
+        $("#netFlow").click(function () {
+            window.location.href = "netflow.html";
+            return;
+        });
+
+        //收藏
+        $("#staticNDayData").click(function () {
+            window.location.href = "staticNDayData.html";
+            return;
+        });
+
+        //收藏
+        $("#addBoke").click(function () {
+            window.location.href = "boke/addBoke.html";
+            return;
+        });
+
+        //收藏
+        $("#readBoke").click(function () {
+            window.location.href = "boke/bokeShow.html";
+            return;
+        });
+
+
     });
-
-    //收藏
-    $("#compute").click(function (){
-      window.location.href="compute.html";
-        return;
-    });
-
-    //收藏
-    $("#examination").click(function (){
-      window.location.href="examination.html";
-        return;
-    });
-
-    //收藏
-    $("#clean").click(function (){
-      window.location.href="index.html";
-      return;
-    });
-
-      //收藏
-      $("#netFlow").click(function (){
-          window.location.href="netflow.html";
-          return;
-      });
-
-      //收藏
-      $("#addBoke").click(function (){
-          window.location.href="boke/addBoke.html";
-          return;
-      });
-
-      //收藏
-      $("#readBoke").click(function (){
-          window.location.href="boke/bokeShow.html";
-          return;
-      });
-
-
-
-  });
 </script>
 </body>
 </html>

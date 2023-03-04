@@ -16,6 +16,7 @@ public class BeanTransformation {
     public static StockDetail createStockDetailFromList(List<StockMsg> stockMsgList){
 
         StockDetail detail = new StockDetail();
+        detail.setExchange("null");
         detail.setIsFocus(0);
         for ( StockMsg m : stockMsgList) {
             switch(m.getItem()){
@@ -48,6 +49,7 @@ public class BeanTransformation {
                     detail.setStockCode(null);
             }
         }
+        detail.setExchange(Util.codeToExchange(detail.getStockCode()));
         return detail;
     }
 

@@ -8,8 +8,22 @@ public class StaticValue {
     /**
      * 获取股票数据网址根路径信息
      */
-    // static String DATA_URL_PATH = "http://118.190.147.193:8080/";
-    public static String DATA_URL_PATH = "http://127.0.0.1:2048/";
+
+    public static String DATA_URL_REMOTE = "remote";
+    public static String DATA_URL_LOCAL = "local";
+
+    public static String DATA_URL_PATH = "";
+    public static String DATA_URL_PATH_SETTING = "remote";//local,
+    public static String PIC_PATH_SETTING = "/Users/kuili/source-code/gupiao-github/pic/";
+    public static String DATA_URL_PATH_REMOTE = "http://8.130.68.34:443/";
+    public static String DATA_URL_PATH_LOCAL = "http://127.0.0.1:443/";
+    public static String getDateUrlPath(){
+        if("remote".equals(DATA_URL_PATH_SETTING)){
+            return DATA_URL_PATH_REMOTE;
+        }else {
+            return DATA_URL_PATH_LOCAL;
+        }
+    }
 
     public static String UPDATE_ALL_STOCK_DATA_KEY = "update_stock_market_all_data_last_date";
 
@@ -26,5 +40,7 @@ public class StaticValue {
     public static String STOCK_MONEY_TO_NORTH = "to_north";
 
     public static String STOCK_MONEY_TO_SOUTH = "to_south";
+
+    //日志部分
 
 }

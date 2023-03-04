@@ -3,6 +3,7 @@ package com.gupiao.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gupiao.enums.ApiUrlPath;
+import com.gupiao.enums.LogSwitchEnums;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.domain.SysSetting;
@@ -12,6 +13,7 @@ import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.util.BeanTransformation;
 import com.gupiao.util.DateUtils;
+import com.gupiao.util.LogUtil;
 import com.gupiao.util.StaticValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,9 @@ public class UpdateStockDailySaleService {
         Integer updateCount = 0,jumpCount = 0,errorCount = 0;
         for (StockDetail sd:localAllStock) {
             try {
-                //log.info("updateAllStockDailySale 处理code:" + sd.getStockCode());
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_TRADE.getName(), Boolean.FALSE)){
+                    log.info("updateAllStockDailySale 处理code:" + sd.getStockCode());
+                }
                 Integer s = this.updateStockDailySaleByCode(sd);
                 if(0==s){
                     updateCount++;
@@ -92,19 +96,25 @@ public class UpdateStockDailySaleService {
      */
     protected Integer updateChinaStockByCode(StockDetail stockDetail) throws Exception {
 
-        SysSetting setting = this.getSaleDateOrCreateByCode(stockDetail);
+        //SysSetting setting = this.getSaleDateOrCreateByCode(stockDetail);
+        //从数据库读取最新的数据
+        StockMarketData data = stockMarketDataMapper.selectMaxDate(stockDetail.getStockCode());
+        String dbEndDate = StaticValue.STOCK_DAILY_SALE_DATE_DEFAULT;
+        if(null != data){
+            dbEndDate = data.getTradeDate();
+        }
         String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
         //计算从默认值到t-1的天数
-        Integer dayDiff = DateUtils.daysDiff(setting.getSysValue(),endDateT_1,DateUtils.DATE_FORMATE5);
-        if( dayDiff < 0){
+        Integer dayDiff = DateUtils.daysDiff(dbEndDate,endDateT_1,DateUtils.DATE_FORMATE5);
+        if( dayDiff <= 0){
             return 1;
         }
-        List<StockMarketData> stockMarketDataList = this.getChinaSaleByDateAndCode(stockDetail.getStockCode(),setting.getSysValue(),endDateT_1);
+        dbEndDate = DateUtils.dateAddDays(dbEndDate,DateUtils.DATE_FORMATE5,1L);
+        List<StockMarketData> stockMarketDataList = this.getChinaSaleByDateAndCode(stockDetail.getStockCode(),dbEndDate,endDateT_1);
         this.insertStockSaleDataToDb(stockMarketDataList);
-        setting.setSysValue(endDateNow);
-        this.updateStockDailySettingByCode(setting);
-        Thread.sleep(1000*2);
+        //setting.setSysValue(endDateNow);
+        //this.updateStockDailySettingByCode(setting);
         return 0;
 
     }
@@ -147,9 +157,11 @@ public class UpdateStockDailySaleService {
         params.put("CODE_ID", code);
         params.put("START_DATE", startDate.replace("-",""));
         params.put("END_DATE", endDate.replace("-",""));
-        log.info("params:{},url:{}",params,ApiUrlPath.STOCK_ZH_A_HIST);
+        if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_TRADE.getName(), Boolean.FALSE)){
+            log.info("getChinaSaleByDateAndCode--params:{},url:{}",params,ApiUrlPath.STOCK_ZH_A_HIST);
+        }
         String res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_HIST, params);
-        log.info("params:{},url:{},res.length:{}",params,ApiUrlPath.STOCK_ZH_A_HIST,res.length());
+        //log.info("params:{},url:{},res.length:{}",params,ApiUrlPath.STOCK_ZH_A_HIST,res.length());
         List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
         List<StockMarketData> records = new LinkedList<>();
         for (Map<String,String> map: resList) {

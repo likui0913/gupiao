@@ -6,6 +6,7 @@ package com.gupiao.enums;
 public enum ApiUrlPath {
 
     //https://akshare.xyz/data/index.html
+    //kcb 科创板  sz 深圳   sh上海
 
     STOCK_SSE_SUMMARY("api/public/stock_sse_summary","上海证券交易所-股票数据总貌"),
     STOCK_SZSE_SUMMARY("api/public/stock_szse_summary","深圳证券交易所-市场总貌-证券类别统计"),

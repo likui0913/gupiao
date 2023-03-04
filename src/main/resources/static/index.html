@@ -22,6 +22,9 @@
 
         $("#load").click(function (){
 
+            var u = window.location.href;
+            window.serviceUrl = u;
+
             //获取处理输入信息
             var userName = document.getElementById("userName").value;
             var passwd = document.getElementById("passwd").value;
@@ -38,7 +41,7 @@
 
             $.ajax({
                 //url:globalConfig.remoteUlr + "user/load",
-                url:globalConfig.remoteUlr + "user/load",
+                url:"user/load",
                 type:"GET",
                 dataType:"text",
                 data:{

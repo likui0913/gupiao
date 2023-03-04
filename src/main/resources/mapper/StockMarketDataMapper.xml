@@ -99,6 +99,20 @@
         order by trade_date asc;
     </select>
 
+
+    <select id="selectByCodeAndTwoDateDesc" resultMap="BaseResultMap">
+        select id,stock_code,trade_date,
+               opening_price,closing_price,highest_price,
+               lowest_price,volume,turnover,
+               amplitude,quote_change,ups_and_downs,
+               turnover_rate
+        from stock_market_data
+        where stock_code = #{code,jdbcType=VARCHAR}
+          and trade_date &gt;= #{startDate,jdbcType=VARCHAR}
+          and trade_date &lt;= #{endDate,jdbcType=VARCHAR}
+        order by trade_date desc;
+    </select>
+
     <select id="selectByCodeAndDate" resultMap="BaseResultMap">
         select id,stock_code,trade_date,
                opening_price,closing_price,highest_price,

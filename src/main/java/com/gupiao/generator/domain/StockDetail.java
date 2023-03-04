@@ -19,6 +19,8 @@ public class StockDetail implements Serializable {
      */
     private String stockCode;
 
+    private String exchange;
+
     private Integer stockType;
 
     private Integer isFocus;

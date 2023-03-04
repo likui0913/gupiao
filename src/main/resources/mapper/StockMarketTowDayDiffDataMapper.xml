@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockMarketTowDayDiffDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockMarketTowDayDiffData">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="daysX" column="days_x" jdbcType="INTEGER"/>
+            <result property="daysY" column="days_y" jdbcType="INTEGER"/>
+            <result property="closingPriceDiffX" column="closing_price_diff_x" jdbcType="DECIMAL"/>
+            <result property="closingPriceDiffY" column="closing_price_diff_y" jdbcType="DECIMAL"/>
+            <result property="closingPriceDiffPercent" column="closing_price_diff_percent" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,trade_date,
+        days_x,days_y,closing_price_diff_x,
+        closing_price_diff_y,closing_price_diff_percent
+    </sql>
+
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockMarketTowDayDiffData" useGeneratedKeys="true">
+        insert into stock_market_tow_day_diff_data(
+            stock_code,trade_date,days_x,days_y,closing_price_diff_x,
+            closing_price_diff_y,closing_price_diff_percent)
+        values(
+                  #{stockCode,jdbcType=VARCHAR},
+                  #{tradeDate,jdbcType=VARCHAR},
+                  #{daysX,jdbcType=INTEGER},
+                  #{daysY,jdbcType=INTEGER},
+                  #{closingPriceDiffX,jdbcType=DECIMAL},
+                  #{closingPriceDiffY,jdbcType=DECIMAL},
+                  #{closingPriceDiffPercent,jdbcType=DECIMAL}
+              )
+    </insert>
+
+    <select id="selectMaxDate" resultMap="BaseResultMap">
+        select stock_code,trade_date,days_x,days_y,closing_price_diff_x,
+               closing_price_diff_y,closing_price_diff_percent
+        from stock_market_tow_day_diff_data
+        where stock_code = #{code,jdbcType=VARCHAR}
+        order by trade_date desc limit 1
+    </select>
+
+
+    <select id="selectByParameter" resultMap="BaseResultMap">
+        select smtddd.stock_code,smtddd.trade_date,smtddd.days_x,smtddd.days_y,smtddd.closing_price_diff_x,
+            smtddd.closing_price_diff_y,smtddd.closing_price_diff_percent
+        from stock_market_tow_day_diff_data smtddd
+        left join stock_detail sd on sd.stock_code = smtddd.stock_code
+        left join stock_market_data smd on smd.stock_code = smtddd.stock_code and smd.trade_date = #{tradeDate,jdbcType=VARCHAR}
+        where smtddd.trade_date = #{tradeDate,jdbcType=VARCHAR} and sd.stock_name not like "%ST%"
+
+        <if test=" startPrice != null and startPrice != ' '">
+            and smd.closing_price >= #{startPrice,jdbcType=DECIMAL}
+        </if>
+        <if test=" endPrice != null and endPrice != ' '">
+            and smd.closing_price &lt;= #{endPrice,jdbcType=DECIMAL}
+        </if>
+
+        <if test=" daysX != null and daysX != ' '">
+            and smtddd.days_x = #{days_x,jdbcType=INTEGER}
+        </if>
+
+        <if test=" daysY != null and daysY != ' '">
+            and smtddd.days_y = #{days_y,jdbcType=INTEGER}
+        </if>
+
+        <if test=" closingPriceDiffXStart != null and closingPriceDiffXStart != ' '">
+            and smtddd.closing_price_diff_x >= #{closingPriceDiffXStart,jdbcType=DECIMAL}
+        </if>
+        <if test=" closingPriceDiffXEnd != null and closingPriceDiffXEnd != ' '">
+            and smtddd.closing_price_diff_x &lt;= #{closingPriceDiffXEnd,jdbcType=DECIMAL}
+        </if>
+
+        <if test=" closingPriceDiffYStart != null and closingPriceDiffYStart != ' '">
+            and smtddd.closing_price_diff_y >= #{closingPriceDiffYStart,jdbcType=DECIMAL}
+        </if>
+        <if test=" closingPriceDiffYEnd != null and closingPriceDiffYEnd != ' '">
+            and smtddd.closing_price_diff_y &lt;= #{closingPriceDiffYEnd,jdbcType=DECIMAL}
+        </if>
+        order by
+
+        <if test=' closingPriceDiffXSort == "asc"'>
+            closing_price_diff_x asc,
+        </if>
+        <if test=' closingPriceDiffXSort == "desc"'>
+            closing_price_diff_x desc,
+        </if>
+
+        <if test=' closingPriceDiffYSort == "asc"'>
+            closing_price_diff_y desc,
+        </if>
+        <if test=' closingPriceDiffYSort == "desc"'>
+            closing_price_diff_y desc,
+        </if>
+
+        id desc
+        limit #{limited,jdbcType=INTEGER}
+    </select>
+
+
+</mapper>

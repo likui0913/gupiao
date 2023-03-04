@@ -1,0 +1,43 @@
+[2023-03-04 19:41:20.399] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 20483 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-04 19:41:20.401] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-04 19:41:20.960] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-04 19:41:20.964] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-04 19:41:20.965] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-04 19:41:20.965] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-04 19:41:20.999] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-04 19:41:20.999] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 576 ms
+[2023-03-04 19:41:21.249] [INFO ] [Thread-4] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-04 19:41:21.329] [INFO ] [Thread-4] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-04 19:41:21.348] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-04 19:41:21.350] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-04 19:41:21.460] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-04 19:41:21.608] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-04 19:41:21.619] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-04 19:41:21.625] [INFO ] [scheduling-1] [o.s.s.a.AnnotationAsyncExecutionInterceptor] [getDefaultExecutor] [243] - More than one TaskExecutor bean found within the context, and none is named 'taskExecutor'. Mark one of them as primary or name it 'taskExecutor' (possibly as an alias) in order to use it for async processing: [asyncExecutor, taskScheduler]
+[2023-03-04 19:41:21.626] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.424 seconds (JVM running for 1.659)
+[2023-03-04 19:41:21.626] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [updateStockSaleData] [37] - 开始统计历史交易信息,date:2023-03-04T19:41:21.626
+[2023-03-04 19:41:21.637] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [updateStockSaleData] [41] - 配置未开启,结束统计历史交易信息
+[2023-03-04 19:41:21.637] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [72] - 开始统计两段时间差值交易信息,date:2023-03-04T19:41:21.637
+[2023-03-04 19:42:22.693] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [136] - computeTwoDayDiffPriceData 处理完成，computeCount=5098,errorCount=0
+[2023-03-04 19:42:22.694] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [137] - computeTwoDayDiffPriceData 处理完成，时间花费：61052
+[2023-03-04 19:42:22.694] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [91] - 结束统计两段时间差值交易信息,date:2023-03-04T19:42:22.694
+[2023-03-04 19:42:22.695] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [46] - 开始增量刷新全部Code历史交易信息,date:2023-03-04T19:42:22.695
+[2023-03-04 19:42:22.696] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [50] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-04 19:42:22.696] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockMoneyFlowDate] [91] - 开始刷新南北资金流量信息,date:2023-03-04T19:42:22.696
+[2023-03-04 19:42:23.297] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockMoneyFlowDate] [93] - 结束刷新南北资金流量信息,date:2023-03-04T19:42:23.297
+[2023-03-04 19:42:23.298] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateAllStockMsg] [66] - 开始刷新全部Code基础信息,date:2023-03-04T19:42:23.298
+[2023-03-04 19:42:23.299] [INFO ] [scheduling-1] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateAllStockMsg] [72] - 退出刷新全部Code基础信息，时间不符合要求,date:2023-03-04T19:42:23.299
+[2023-03-04 19:43:22.698] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [72] - 开始统计两段时间差值交易信息,date:2023-03-04T19:43:22.698
+[2023-03-04 19:44:16.990] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [136] - computeTwoDayDiffPriceData 处理完成，computeCount=5098,errorCount=0
+[2023-03-04 19:44:16.990] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [137] - computeTwoDayDiffPriceData 处理完成，时间花费：54279
+[2023-03-04 19:44:16.991] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [91] - 结束统计两段时间差值交易信息,date:2023-03-04T19:44:16.991
+[2023-03-04 19:45:16.991] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [72] - 开始统计两段时间差值交易信息,date:2023-03-04T19:45:16.991
+[2023-03-04 19:45:53.726] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [136] - computeTwoDayDiffPriceData 处理完成，computeCount=5098,errorCount=0
+[2023-03-04 19:45:53.727] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [137] - computeTwoDayDiffPriceData 处理完成，时间花费：36722
+[2023-03-04 19:45:53.727] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [91] - 结束统计两段时间差值交易信息,date:2023-03-04T19:45:53.727
+[2023-03-04 19:46:53.732] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [72] - 开始统计两段时间差值交易信息,date:2023-03-04T19:46:53.732
+[2023-03-04 19:47:20.520] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [136] - computeTwoDayDiffPriceData 处理完成，computeCount=5098,errorCount=0
+[2023-03-04 19:47:20.521] [INFO ] [scheduling-1] [com.gupiao.service.StatisticService] [computeTwoDayDiffPriceData] [137] - computeTwoDayDiffPriceData 处理完成，时间花费：26774
+[2023-03-04 19:47:20.521] [INFO ] [scheduling-1] [com.gupiao.xjob.StatisticTask] [computeTowDayDiffData] [91] - 结束统计两段时间差值交易信息,date:2023-03-04T19:47:20.521
+[2023-03-04 19:47:52.239] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-04 19:47:52.240] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.

@@ -1,11 +1,17 @@
 package com.gupiao.util;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 时间处理通用类
@@ -72,16 +78,31 @@ public class DateUtils {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
-        try {
-            String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
-            String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
-            Integer different= DateUtils.daysDiff("2022-10-02","2022-10-03",DateUtils.DATE_FORMATE5);
-            System.out.println(endDateNow);
-            System.out.println(endDateT_1);
-            System.out.println(different);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        BigDecimal a = BigDecimal.valueOf(1.1);
+        BigDecimal b = BigDecimal.valueOf(2.2);
+        BigDecimal c = BigDecimal.valueOf(3.3);
+        BigDecimal d = BigDecimal.valueOf(1.1);
+        System.out.println(a.compareTo(b));
+        System.out.println(b.compareTo(a));
+        System.out.println(a.compareTo(d));
+
     }
 }

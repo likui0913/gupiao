@@ -36,7 +36,7 @@ public class HttpService {
                 urlRes = urlRes.replace(entry.getKey(),entry.getValue());
             }
         }
-        return doGet(StaticValue.DATA_URL_PATH + urlRes);
+        return doGet(StaticValue.getDateUrlPath() + urlRes);
     }
 
     public static String doGet(String url) throws java.io.IOException {

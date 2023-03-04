@@ -86,6 +86,23 @@ CREATE TABLE `stock_money_net_flow` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+
+CREATE TABLE `stock_market_static_data` (
+                                            `id` bigint primary key not null auto_increment,
+                                            `stock_code` varchar(60) NOT NULL COMMENT '股票编码',
+                                            `trade_date` varchar(10) NOT NULL COMMENT '统计时间',
+                                            `days` int(11) NOT NULL COMMENT '计算天数',
+                                            `closing_price_diff` decimal(30,10) NOT NULL COMMENT '收盘价差异，当天收盘价-N天前收盘价',
+                                            `up_days` int(11) NOT NULL COMMENT '上涨天数',
+                                            `down_days` int(11) NOT NULL COMMENT '下跌天数',
+                                            `trade_count` int(11) NOT NULL COMMENT 'n天交易笔数',
+                                            `all_turnover` decimal(30,10) NOT NULL COMMENT 'n天总成交额',
+                                            KEY `idx_code_name` (`stock_code`,`trade_date`,`days`),
+                                            KEY `idx_2` (`trade_date`,`days`),
+                                            KEY `idx_3` (`days`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='股票交易统计数据';
+
+
 truncate table industry_transactions;
 truncate table stock_detail;
 truncate table stock_market_data;

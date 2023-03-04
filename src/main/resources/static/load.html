@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>数据分析平台</title>
+
 </head>
 <body>
 
@@ -38,7 +39,7 @@
 
             $.ajax({
                 //url:globalConfig.remoteUlr + "user/load",
-                url:globalConfig.remoteUlr + "user/load",
+                url: "user/load",
                 type:"GET",
                 dataType:"text",
                 data:{
@@ -48,9 +49,10 @@
                 success:function (resData){
                     const resJson = JSON.parse(resData);
                     if(resJson.status === true){
+                        //localStorage.setItem("runEnv","local");
                         window.location.href="all.html";
                     }else{
-                        alert("用户名或密码错误！");
+                        alert("用户名或密码错误！！！");
                         return;
                     }
                 },

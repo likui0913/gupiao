@@ -12,3 +12,4 @@
 配置：
 updateAllStockMsgIsOn   是否增量抓取股票基础信息
 updateStockSaleDataIsOn 是否增量抓取股票交易信息
+staticStockSaleDataIsOn 是否开启统计数据任务

@@ -4,21 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.enums.ApiUrlPath;
-import com.gupiao.generator.domain.StockMarketData;
-import com.gupiao.generator.domain.StockMarketXMovingAverage;
-import com.gupiao.generator.domain.SysSetting;
+import com.gupiao.enums.LogSwitchEnums;
+import com.gupiao.generator.domain.*;
 import com.gupiao.generator.mapper.*;
 import com.gupiao.service.thread.StockMarketDataThread;
 import com.gupiao.util.DateUtils;
+import com.gupiao.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -42,6 +40,12 @@ public class StatisticService {
     @Autowired
     StockDailyAverageDataMapper stockDailyAverageDataMapper;
 
+    @Autowired
+    StockMarketStaticDataMapper stockMarketStaticDataMapper;
+
+    @Autowired
+    StockMarketTowDayDiffDataMapper stockMarketTowDayDiffDataMapper;
+
     /**
      * 计算股票的xDailyPrice
      */
@@ -58,6 +62,310 @@ public class StatisticService {
         //获取需要计算的股票信息
 
 
+    }
+
+    /**
+     * 计算表：的统计信息
+     * @param days
+     */
+    public void computeNDayStaticData(List<Integer> days){
+
+        Long startTime = System.currentTimeMillis();
+        //1.获取全量股票信息，获取当前时间
+        List<StockDetail> localAllStock = getLocalAllStock();
+        //2.获取当前时间
+        String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
+
+        Integer computeCount = 0,errorCount = 0;
+        for (StockDetail sd:localAllStock) {
+
+            if(sd.getStockType().equals(1)){
+                continue;
+            }
+            try {
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC.getName(), Boolean.FALSE)){
+                    log.info("computeNDayStaticData 处理code:" + sd.getStockCode());
+                }
+                this.computeByCodeAndDateAndDays(sd,endDateT_1,days);
+                computeCount++;
+            }catch (Exception e){
+                log.error("computeNDayStaticData 处理出错，code=" + sd.getStockCode(),e);
+                errorCount++;
+            }
+
+        }
+
+        log.info("computeNDayStaticData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
+        log.info("computeNDayStaticData 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
+
+    }
+
+    /**
+     * 计算两个时间段内价格差异服务--未完成
+     * @param days
+     */
+    public void computeTwoDayDiffPriceData(List<String> days){
+
+        Long startTime = System.currentTimeMillis();
+        //1.获取全量股票信息，获取当前时间
+        List<StockDetail> localAllStock = getLocalAllStock();
+        //2.获取当前时间
+        String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
+
+        Integer computeCount = 0,errorCount = 0;
+        for (StockDetail sd:localAllStock) {
+
+            if(sd.getStockType().equals(1)){
+                continue;
+            }
+            try {
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC_TWO_DAY.getName(), Boolean.FALSE)){
+                    log.info("computeTwoDayDiffPriceData 处理code:" + sd.getStockCode());
+                }
+                this.computeTwoDayDiffByCodeAndDateAndDays(sd,endDateT_1,days);
+                computeCount++;
+            }catch (Exception e){
+                log.error("computeTwoDayDiffPriceData 处理出错，code=" + sd.getStockCode(),e);
+                errorCount++;
+            }
+
+        }
+
+        log.info("computeTwoDayDiffPriceData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
+        log.info("computeTwoDayDiffPriceData 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
+
+    }
+
+    /**
+     * @param sd 需要计算的code
+     * @param endDate 截止时间，包含此日期
+     * @param days 要计算的间隔天数集合
+     */
+    public void computeByCodeAndDateAndDays(StockDetail sd, String endDate, List<Integer> days){
+
+        //1.获取已经计算好的最新的时间，如果没有，默认倒序60天
+        StockMarketStaticData staticData = stockMarketStaticDataMapper.selectMaxDate(sd.getStockCode());
+        String queryEndDate = "",queryStartDate = "";
+        if(null == staticData){
+            // 倒序最大60天
+            // 因为要计算第60天数据，所以要多查询一部分数据，默认多查询30天，所以要查询共计90天数据
+            queryEndDate = DateUtils.dateAddDays(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5),DateUtils.DATE_FORMATE5, -60L);
+        }else{
+            queryEndDate = staticData.getTradeDate();
+        }
+
+        if(queryEndDate.equals(endDate)){
+            //昨天的数据已经计算了，退出
+            return;
+        }
+
+        //计算N+1的数据,queryEndDate存放需要计算的日期
+        queryEndDate = DateUtils.dateAddDays(queryEndDate, DateUtils.DATE_FORMATE5,1L);
+        while(true){
+
+            StockMarketData d = stockMarketDataMapper.selectByCode(sd.getStockCode(),queryEndDate);
+            if(d != null){
+                break;
+            }
+
+            if(queryEndDate.equals(endDate)){
+                return;
+            }
+            queryEndDate = DateUtils.dateAddDays(queryEndDate, DateUtils.DATE_FORMATE5,1L);
+
+        }
+
+        //查询算需要的最早天数数据,因为计算需要，所以要多查询一部分数据，最多查询30天数据即可
+        queryStartDate = DateUtils.dateAddDays(queryEndDate,DateUtils.DATE_FORMATE5, -30L);
+        if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC.getName(), Boolean.FALSE)){
+            log.info("computeByCodeAndDateAndDays code:" + sd.getStockCode() + ",queryStartDate:" + queryStartDate + ",queryEndDate:" + queryEndDate);
+        }
+        List<StockMarketData> res = stockMarketDataMapper.selectByCodeAndTwoDateDesc(sd.getStockCode(),queryStartDate,queryEndDate);
+        if(res == null || res.size() == 0){
+            //不存在对应数据，直接退出
+            return;
+        }
+        res = sortByDate(res);
+
+        //循环计算对应结果，写如数据库
+        for (Integer day:days){
+            if(res.size() <= day){
+                //历史数据不能满足计算天数要求，直接退出
+                continue;
+            }
+            StockMarketStaticData data = compute(sd,queryStartDate,queryEndDate,day,res);
+            insert(data);
+        }
+
+    }
+
+
+    /**
+     * @param sd 需要计算的code
+     * @param endDate 截止时间，包含此日期
+     * @param days 要计算的间隔天数集合
+     */
+    public void computeTwoDayDiffByCodeAndDateAndDays(StockDetail sd, String endDate, List<String> days){
+
+        //1.获取已经计算好的最新的时间，如果没有，默认倒序60天
+        StockMarketTowDayDiffData staticData = stockMarketTowDayDiffDataMapper.selectMaxDate(sd.getStockCode());
+        String queryEndDate = "",queryStartDate = "";
+        if(null == staticData){
+            // 倒序最大60天
+            // 因为要计算第60天数据，所以要多查询一部分数据，默认多查询30天，所以要查询共计90天数据
+            queryEndDate = DateUtils.dateAddDays(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5),DateUtils.DATE_FORMATE5, -60L);
+        }else{
+            queryEndDate = staticData.getTradeDate();
+        }
+
+        if(queryEndDate.equals(endDate)){
+            //昨天的数据已经计算了，退出
+            return;
+        }
+
+        //计算N+1的数据,queryEndDate存放需要计算的日期
+        queryEndDate = DateUtils.dateAddDays(queryEndDate, DateUtils.DATE_FORMATE5,1L);
+        while(true){
+
+            StockMarketData d = stockMarketDataMapper.selectByCode(sd.getStockCode(),queryEndDate);
+            if(d != null){
+                break;
+            }
+
+            if(queryEndDate.equals(endDate)){
+                return;
+            }
+            queryEndDate = DateUtils.dateAddDays(queryEndDate, DateUtils.DATE_FORMATE5,1L);
+
+        }
+
+        //查询算需要的最早天数数据,因为计算需要，所以要多查询一部分数据，最多查询60天数据即可
+        queryStartDate = DateUtils.dateAddDays(queryEndDate,DateUtils.DATE_FORMATE5, -60L);
+        if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC_TWO_DAY.getName(), Boolean.FALSE)){
+            log.info("computeTwoDayDiffByCodeAndDateAndDays code:" + sd.getStockCode() + ",queryStartDate:" + queryStartDate + ",queryEndDate:" + queryEndDate);
+        }
+        List<StockMarketData> res = stockMarketDataMapper.selectByCodeAndTwoDateDesc(sd.getStockCode(),queryStartDate,queryEndDate);
+        if(res == null || res.size() == 0){
+            //不存在对应数据，直接退出
+            return;
+        }
+        res = sortByDate(res);
+
+        //循环计算对应结果，写如数据库
+        for (String day:days){
+
+            String[] oneDays = day.split("-");
+            Integer dayx = Integer.valueOf(oneDays[0]);
+            Integer dayy = Integer.valueOf(oneDays[1]);
+
+            if( res.size() <= (dayx + dayy + 1) ){
+                //历史数据不能满足计算天数要求，直接退出
+                if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC_TWO_DAY.getName(), Boolean.FALSE)){
+                    log.info("computeTwoDayDiffByCodeAndDateAndDays 历史数据不能满足计算天数要求 code:" + sd.getStockCode()
+                            + ",queryStartDate:" + queryStartDate
+                            + ",queryEndDate:" + queryEndDate
+                            + ",res.size:" + res.size()
+                            + ",dayx:" + dayx
+                            + ",dayy:" + dayy);
+                }
+                continue;
+            }
+            StockMarketTowDayDiffData data = computeTwoDaysDiff(sd,queryStartDate,queryEndDate,dayx,dayy,res);
+            insert(data);
+        }
+
+    }
+
+    public StockMarketStaticData compute(StockDetail sd, String startDate, String endDate, Integer days, List<StockMarketData> marketData){
+        StockMarketStaticData data = new StockMarketStaticData();
+        Integer upDays = 0,downDays=0,tradeCount=0;
+        BigDecimal closingPriceDiff = BigDecimal.ZERO,
+                allTurnover = BigDecimal.ZERO,
+                turnoverRateAvg = BigDecimal.ZERO;
+        Gson g = new Gson();
+
+        for(int i=0;i<days;i++){
+            if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_STATIC.getName(), Boolean.FALSE)){
+                log.info("compute code:" + sd.getStockCode() + ",date:" + endDate + ",day:" + days + ",依赖数据：" + g.toJson(marketData.get(i)));
+            }
+            if(marketData.get(i).getClosingPrice().compareTo(marketData.get(i + 1).getClosingPrice()) < 0){
+                //走低
+                downDays++;
+            }else if( marketData.get(i).getClosingPrice().compareTo(marketData.get(i + 1).getClosingPrice()) > 0 ){
+                //走高
+                upDays++;
+            }
+            allTurnover = allTurnover.add(marketData.get(i).getTurnover());
+            turnoverRateAvg = turnoverRateAvg.add(marketData.get(i).getTurnoverRate());
+        }
+        closingPriceDiff = marketData.get(0).getClosingPrice().subtract(marketData.get(days).getClosingPrice());
+        turnoverRateAvg = turnoverRateAvg.divide(BigDecimal.valueOf(days),6, BigDecimal.ROUND_HALF_UP);
+        data.setDays(days);
+        data.setAllTurnover(allTurnover);
+        data.setDownDays(downDays);
+        data.setUpDays(upDays);
+        data.setStockCode(sd.getStockCode());
+        data.setTradeDate(endDate);
+        data.setClosingPriceDiff(closingPriceDiff);
+        data.setTradeCount(tradeCount);
+        data.setTurnoverRateAvg(turnoverRateAvg);
+
+        return data;
+    }
+
+
+    public StockMarketTowDayDiffData computeTwoDaysDiff(
+            StockDetail sd, String startDate, String endDate, Integer dayx, Integer dayy, List<StockMarketData> marketData){
+        StockMarketTowDayDiffData data = new StockMarketTowDayDiffData();
+        BigDecimal daysDiff = BigDecimal.ZERO,dayyDiff=BigDecimal.ZERO,diffpercent=BigDecimal.ZERO;
+        BigDecimal closingPriceDiff = BigDecimal.ZERO;
+
+        StockMarketData dataStart = marketData.get(0);
+        StockMarketData dataX = marketData.get(dayx);
+        StockMarketData dataY = marketData.get(dayy);
+
+        data.setStockCode(sd.getStockCode());
+        data.setTradeDate(endDate);
+        data.setDaysX(dayx);
+        data.setDaysY(dayy);
+
+        data.setClosingPriceDiffX( dataStart.getClosingPrice().subtract(dataX.getClosingPrice()) );
+        data.setClosingPriceDiffY( dataX.getClosingPrice().subtract(dataY.getClosingPrice()) );
+        if(dataX.equals(BigDecimal.ZERO)){
+            closingPriceDiff = BigDecimal.valueOf(1000000);
+        }else{
+            closingPriceDiff = dataY.getClosingPrice().divide(dataX.getClosingPrice(),BigDecimal.ROUND_HALF_UP);
+        }
+        data.setClosingPriceDiffPercent(closingPriceDiff);
+
+        return data;
+    }
+
+    public void insert(StockMarketStaticData data){
+        stockMarketStaticDataMapper.insert(data);
+    }
+
+    public void insert(StockMarketTowDayDiffData data){
+        stockMarketTowDayDiffDataMapper.insert(data);
+    }
+
+    /**
+     * 查询本地全部股票基础信息
+     * @return
+     */
+    public List<StockDetail> getLocalAllStock(){
+        return stockDetailMapper.selectAll();
+    }
+
+    /**
+     * 基于时间做排序
+     * @param p
+     * @return
+     */
+    List<StockMarketData> sortByDate(List<StockMarketData> p){
+        return p;
     }
 
 /**以下代码不用**************************************************************************/
@@ -80,7 +388,6 @@ public class StatisticService {
         }
 
     }
-
 
     /**
      * 计算一段时间的统计数据
@@ -119,6 +426,34 @@ public class StatisticService {
             tmpDate = DateUtils.dateAddDays(tmpDate,DateUtils.DATE_FORMATE5,1L);
 
         }
+
+    }
+
+    /**
+     * 获取X日均线计算结果
+     * @param code
+     * @param days
+     */
+    public BigDecimal getXDayMovingAverage(List<StockMarketData> res,String code,String endDate,Integer days){
+        log.info("code="+code + ",endDate="+endDate+"days=" + days);
+        if(null == res || res.size() < days){
+            throw new RuntimeException("code:" + code + " 历史数据不足，不能计算过去" + days + "天的平均数据！");
+        }
+        BigDecimal all = BigDecimal.valueOf(0.0);
+        Integer size = 0;
+
+        for (StockMarketData d:res) {
+
+            if(size >= days){
+                break;
+            }
+            all = all.add(d.getClosingPrice());
+            log.info("days="+days + "value=" + all);
+            size++;
+
+        }
+        all = all.divide(BigDecimal.valueOf(days),8, BigDecimal.ROUND_HALF_UP);
+        return all;
 
     }
 
@@ -226,35 +561,6 @@ public class StatisticService {
         stockMarketXMovingAverage.setClosingPrice(stockMarketData.getClosingPrice());
 
         return stockMarketXMovingAverage;
-
-    }
-
-
-    /**
-     * 获取X日均线计算结果
-     * @param code
-     * @param days
-     */
-    public BigDecimal getXDayMovingAverage(List<StockMarketData> res,String code,String endDate,Integer days){
-        log.info("code="+code + ",endDate="+endDate+"days=" + days);
-        if(null == res || res.size() < days){
-            throw new RuntimeException("code:" + code + " 历史数据不足，不能计算过去" + days + "天的平均数据！");
-        }
-        BigDecimal all = BigDecimal.valueOf(0.0);
-        Integer size = 0;
-
-        for (StockMarketData d:res) {
-
-            if(size >= days){
-                break;
-            }
-            all = all.add(d.getClosingPrice());
-            log.info("days="+days + "value=" + all);
-            size++;
-
-        }
-        all = all.divide(BigDecimal.valueOf(days),8, BigDecimal.ROUND_HALF_UP);
-        return all;
 
     }
 

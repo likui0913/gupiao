@@ -9,6 +9,7 @@
             <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
             <result property="stockType" column="stock_type" jdbcType="INTEGER"/>
             <result property="stockName" column="stock_name" jdbcType="VARCHAR"/>
+            <result property="exchange" column="exchange" jdbcType="VARCHAR"/>
             <result property="marketTime" column="market_time" jdbcType="VARCHAR"/>
             <result property="industry" column="industry" jdbcType="VARCHAR"/>
             <result property="totalCapital" column="total_capital" jdbcType="DECIMAL"/>
@@ -18,22 +19,22 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,stock_code,stock_type,stock_name,market_time,
+        id,stock_code,stock_type,exchange,stock_name,market_time,
         industry,total_capital,circulating_capital,
         total_capitalization,circulating_capitalization,is_focus as focus
     </sql>
 
     <insert id="insert" parameterType="com.gupiao.generator.domain.StockDetail" useGeneratedKeys="true">
-        insert into stock_detail(stock_code,stock_type,stock_name,market_time,
+        insert into stock_detail(stock_code,stock_type,exchange,stock_name,market_time,
                                  industry,total_capital,circulating_capital,
                                  total_capitalization,circulating_capitalization,is_focus)
-        values(#{stockCode,jdbcType=VARCHAR},#{stockType,jdbcType=INTEGER},#{stockName,jdbcType=VARCHAR},#{marketTime,jdbcType=VARCHAR},
+        values(#{stockCode,jdbcType=VARCHAR},#{stockType,jdbcType=INTEGER},#{exchange,jdbcType=VARCHAR},#{stockName,jdbcType=VARCHAR},#{marketTime,jdbcType=VARCHAR},
                #{industry,jdbcType=VARCHAR},#{totalCapital,jdbcType=DECIMAL},#{circulatingCapital,jdbcType=DECIMAL},
                #{totalCapitalization,jdbcType=DECIMAL},#{circulatingCapitalization,jdbcType=DECIMAL},#{isFocus,jdbcType=INTEGER})
     </insert>
 
     <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id,stock_code,stock_type,stock_name,market_time,
+        select id,stock_code,stock_type,exchange,stock_name,market_time,
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
@@ -41,7 +42,7 @@
     </select>
 
     <select id="selectNextByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id,stock_code,stock_type,stock_name,market_time,
+        select id,stock_code,stock_type,exchange,stock_name,market_time,
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
@@ -58,7 +59,7 @@
     </select>
 
     <select id="selectLastByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id,stock_code,stock_type,stock_name,market_time,
+        select id,stock_code,stock_type,exchange,stock_name,market_time,
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
@@ -75,7 +76,7 @@
     </select>
 
     <select id="selectByCodeAndPages" resultMap="BaseResultMap">
-        select id,stock_code,stock_type,stock_name,market_time,
+        select id,stock_code,stock_type,exchange,stock_name,market_time,
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
@@ -94,7 +95,7 @@
     </select>
 
     <select id="selectAll" resultMap="BaseResultMap">
-        select id,stock_code,stock_type,stock_name,market_time,
+        select id,stock_code,stock_type,exchange,stock_name,market_time,
                industry,total_capital,circulating_capital,
                total_capitalization,circulating_capitalization,is_focus as focus
         from stock_detail
@@ -102,7 +103,14 @@
 
     <update id="updateById">
         update stock_detail set
+            exchange = #{exchange,jdbcType=VARCHAR},
+            stock_name = #{stockName,jdbcType=VARCHAR},
+            market_time = #{marketTime,jdbcType=VARCHAR},
             industry = #{industry,jdbcType=VARCHAR},
+            total_capital = #{totalCapital,jdbcType=DECIMAL},
+            circulating_capital = #{circulatingCapital,jdbcType=DECIMAL},
+            total_capitalization = #{totalCapitalization,jdbcType=DECIMAL},
+            circulating_capitalization = #{circulatingCapitalization,jdbcType=DECIMAL}
         where id = #{id,jdbcType=INTEGER}
     </update>
 

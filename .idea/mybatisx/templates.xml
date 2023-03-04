@@ -64,8 +64,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="StockDailyAverageData" />
-                  <option name="tableName" value="stock_daily_average_data" />
+                  <option name="className" value="StockMarketTowDayDiffData" />
+                  <option name="tableName" value="stock_market_tow_day_diff_data" />
                 </TableUIInfo>
               </list>
             </option>

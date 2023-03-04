@@ -61,12 +61,6 @@ public class StockService {
                 for ( StockCode code : r ) {
                     StockDetail detail = new StockDetail();
 
-                    //0.检查股票是否已经存在
-                    StockDetail detailTmp = stockDetailMapper.selectByCode(code.getCode());
-                    if(null != detailTmp && null != detailTmp.getStockCode()){
-                        continue;
-                    }
-
                     //1.获取股票详细信息
                     HashMap map = new HashMap();
                     map.put("CODE_ID",code.getCode());
@@ -75,8 +69,20 @@ public class StockService {
 
                     //2.解析查询结果
                     detail = BeanTransformation.createStockDetailFromList(detailStock);
-                    log.info("新增股票 code:" + detail.getStockCode());
-                    stockDetailMapper.insert(detail);
+
+
+                    //0.检查股票是否已经存在
+                    StockDetail detailTmp = stockDetailMapper.selectByCode(code.getCode());
+                    if(null != detailTmp && null != detailTmp.getStockCode()){
+                        //存在则更新
+                        //log.info("更新股票 code:" + detail.getStockCode());
+                        detail.setId(detailTmp.getId());
+                        stockDetailMapper.insert(detail);
+                    }else{
+                        //不存在则插入
+                        log.info("新增Code code:" + detail.getStockCode());
+                        stockDetailMapper.insert(detail);
+                    }
 
                 }
 
@@ -267,10 +273,6 @@ public class StockService {
             records.add(b);
         }
         stockMarketDataMapper.batchInsert(records);
-    }
-
-    public static void main(String[] args) {
-        DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
     }
 
     /**
