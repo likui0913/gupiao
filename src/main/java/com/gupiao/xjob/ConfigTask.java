@@ -30,10 +30,6 @@ public class ConfigTask {
     public void updateConfig(){
 
         try{
-            updateLogConfig(LogSwitchEnums.STOCK_MSG.getName());
-            updateLogConfig(LogSwitchEnums.STOCK_TRADE.getName());
-            updateLogConfig(LogSwitchEnums.STOCK_STATIC.getName());
-            updateLogConfig(LogSwitchEnums.STOCK_STATIC_TWO_DAY.getName());
         }catch (Exception e){
             log.error("ConfigTask--updateConfig 任务出错",e);
         }

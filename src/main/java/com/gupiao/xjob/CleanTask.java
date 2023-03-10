@@ -22,7 +22,10 @@ import java.util.Map;
 @EnableAsync
 public class CleanTask {
 
-    @Scheduled(fixedDelay = 1000 * 60)
+    /**
+     * 清理过期session信息
+     */
+    @Scheduled(fixedDelay = 1000 * 60 * 30)
     @Async
     public void cleanTimeoutSession(){
         try{
@@ -34,6 +37,7 @@ public class CleanTask {
                     iterator.remove();
                 }
             }
+
         }catch (Exception e){
             log.error("cleanTimeoutSession 出现错误！",e);
         }

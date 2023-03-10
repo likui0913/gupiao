@@ -13,3 +13,14 @@
 updateAllStockMsgIsOn   是否增量抓取股票基础信息
 updateStockSaleDataIsOn 是否增量抓取股票交易信息
 staticStockSaleDataIsOn 是否开启统计数据任务
+
+
+定时任务说明：
+更新股票明细信息
+更新股票历史交易信息
+更新股票每天实时交易信息
+更新部分配置到内存
+计算股票N天涨跌信息
+计算XY两段时间涨跌信息
+发送定时消息到钉钉
+清理过期session信息

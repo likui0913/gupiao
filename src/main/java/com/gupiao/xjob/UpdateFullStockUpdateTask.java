@@ -40,8 +40,10 @@ public class UpdateFullStockUpdateTask {
 
     ReentrantLock lock = new ReentrantLock();
 
-    @Scheduled(fixedDelay = 1000*60*30)
+    @Scheduled(fixedDelay = 1000*60*60)
+    @Async(value="asyncExecutor")
     public void updateStockSaleData(){
+
         try{
             log.info("开始增量刷新全部Code历史交易信息,date:" + LocalDateTime.now());
 
@@ -53,13 +55,16 @@ public class UpdateFullStockUpdateTask {
 
             updateStockDailySaleService.updateAllStockDailySale();
             log.info("结束增量刷新全部Code历史交易信息,date:" + LocalDateTime.now());
+
         }catch (Exception e){
             log.error("updateStockSaleData 出现错误！",e);
         }
+
     }
 
     //每个6个小时更新1次
     @Scheduled(fixedDelay = 1000*60*60*6)
+    @Async(value="asyncExecutor")
     public void updateAllStockMsg(){
         try{
 
@@ -85,6 +90,7 @@ public class UpdateFullStockUpdateTask {
     }
 
     @Scheduled(fixedDelay = 1000*60*30)
+    @Async(value="asyncExecutor")
     public void updateStockMoneyFlowDate(){
         try{
 
@@ -93,6 +99,25 @@ public class UpdateFullStockUpdateTask {
             log.info("结束刷新南北资金流量信息,date:" + LocalDateTime.now());
         }catch (Exception e){
             log.error("updateStockSaleData 出现错误！",e);
+        }
+    }
+
+    @Scheduled(cron = "0 30 14 * * ?")
+    @Async(value="asyncExecutor")
+    public void updateStockNowTradeData(){
+        try{
+
+            log.info("开始刷新全量实时交易信息,date:" + LocalDateTime.now());
+
+            SysSetting setting = sysSettingMapper.selectByCode("updateRuntimeStockTradeData");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,退出刷新全量实时交易信息");
+                return;
+            }
+            updateStockDailySaleService.renovateNowTradeDate();
+            log.info("结束刷新全量实时交易信,date:" + LocalDateTime.now());
+        }catch (Exception e){
+            log.error("updateStockNowTradeData 出现错误！",e);
         }
     }
 

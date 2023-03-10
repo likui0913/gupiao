@@ -6,11 +6,9 @@ import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.enums.LogSwitchEnums;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.domain.StockMarketRuntimeData;
 import com.gupiao.generator.domain.SysSetting;
-import com.gupiao.generator.mapper.IndustryTransactionsMapper;
-import com.gupiao.generator.mapper.StockDetailMapper;
-import com.gupiao.generator.mapper.StockMarketDataMapper;
-import com.gupiao.generator.mapper.SysSettingMapper;
+import com.gupiao.generator.mapper.*;
 import com.gupiao.util.BeanTransformation;
 import com.gupiao.util.DateUtils;
 import com.gupiao.util.LogUtil;
@@ -37,6 +35,9 @@ public class UpdateStockDailySaleService {
 
     @Autowired
     SysSettingMapper sysSettingMapper;
+
+    @Autowired
+    StockMarketRuntimeDataMapper stockMarketRuntimeDataMapper;
 
     public void updateAllStockDailySale(){
         Long startTime = System.currentTimeMillis();
@@ -197,6 +198,47 @@ public class UpdateStockDailySaleService {
      */
     protected List<StockMarketData> getUSASaleByDateAndCode(String code,String startDate,String endDate)throws Exception {
         return null;
+    }
+
+    /**
+     * 刷新实时全量交易数据
+     */
+    public void renovateNowTradeDate(){
+
+        //1 获取当前数据
+        List<StockMarketRuntimeData> res = getNowTradeData();
+
+        //2 解析时间
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        String nowDateTime = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2);
+
+        //3 删除数据
+        stockMarketRuntimeDataMapper.deleteByDate(nowDate);
+
+        //4 全量数据写入
+        stockMarketRuntimeDataMapper.batchInsert(res);
+
+        log.info("刷新实时全量数据，条数:" + res.size());
+
+    }
+
+    public List<StockMarketRuntimeData> getNowTradeData(){
+        List<StockMarketRuntimeData> res = new LinkedList<>();
+
+        try {
+            String tradeDataString = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_SPOT_EM,null);
+            List<Map<String, String>> resList = new Gson().fromJson(tradeDataString, new TypeToken<List<Map<String, String>>>() {}.getType());
+            for (Map<String,String> map: resList) {
+                StockMarketRuntimeData sd = BeanTransformation.createStockMarketRuntimeDataFromList(map);
+                sd.setTradeDate(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5));
+                sd.setTradeTime(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2));
+                res.add(sd);
+            }
+        }catch (Exception e){
+            log.error("getNowTradeData 出现错误。",e);
+        }
+
+        return res;
     }
 
     public static void main(String[] args) {

@@ -98,6 +98,21 @@ public class StockMarketRuntimeData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public StockMarketRuntimeData(){
+        newPrice = BigDecimal.ZERO;
+        quoteChange = BigDecimal.ZERO;
+        upsAndDowns = BigDecimal.ZERO;
+        volume = BigDecimal.ZERO;
+        turnover = BigDecimal.ZERO;
+        amplitude = BigDecimal.ZERO;
+        highestPrice = BigDecimal.ZERO;
+        lowestPrice = BigDecimal.ZERO;
+        openingPrice = BigDecimal.ZERO;
+        turnoverRate = BigDecimal.ZERO;
+        m5Amplitude = BigDecimal.ZERO;
+        d60Amplitude = BigDecimal.ZERO;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -180,4 +195,5 @@ public class StockMarketRuntimeData implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
 }

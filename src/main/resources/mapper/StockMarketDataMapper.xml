@@ -28,7 +28,6 @@
         turnover_rate
     </sql>
 
-
     <insert id="insert" parameterType="com.gupiao.generator.domain.StockMarketData" useGeneratedKeys="true">
         insert into stock_market_data(stock_code,trade_date,
                                       opening_price,closing_price,highest_price,
@@ -98,7 +97,6 @@
           and trade_date &lt;= #{endDate,jdbcType=VARCHAR}
         order by trade_date asc;
     </select>
-
 
     <select id="selectByCodeAndTwoDateDesc" resultMap="BaseResultMap">
         select id,stock_code,trade_date,

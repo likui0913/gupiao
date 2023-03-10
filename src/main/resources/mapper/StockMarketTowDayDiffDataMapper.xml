@@ -45,7 +45,6 @@
         order by trade_date desc limit 1
     </select>
 
-
     <select id="selectByParameter" resultMap="BaseResultMap">
         select smtddd.stock_code,smtddd.trade_date,smtddd.days_x,smtddd.days_y,smtddd.closing_price_diff_x,
             smtddd.closing_price_diff_y,smtddd.closing_price_diff_percent
@@ -101,6 +100,5 @@
         id desc
         limit #{limited,jdbcType=INTEGER}
     </select>
-
 
 </mapper>

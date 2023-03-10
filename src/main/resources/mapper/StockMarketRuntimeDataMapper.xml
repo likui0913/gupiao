@@ -32,5 +32,36 @@
         lowest_price,opening_price,turnover_rate,
         m_5_amplitude,d_60_amplitude
     </sql>
-    
+
+    <insert id="batchInsert" parameterType="com.gupiao.generator.domain.StockMarketRuntimeData" useGeneratedKeys="true">
+        insert into stock_market_runtime_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            stock_code,stock_name,
+            trade_date,trade_time,new_price,
+            quote_change,ups_and_downs,
+            volume,turnover,amplitude,
+            highest_price,lowest_price,
+            opening_price,turnover_rate,m_5_amplitude,
+            d_60_amplitude
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            <trim suffixOverrides=",">
+                #{item.stockCode,jdbcType=VARCHAR},#{item.stockName,jdbcType=VARCHAR},
+                #{item.tradeDate,jdbcType=DECIMAL},#{item.tradeTime,jdbcType=DECIMAL},#{item.newPrice,jdbcType=DECIMAL},
+                #{item.quoteChange,jdbcType=DECIMAL},#{item.upsAndDowns,jdbcType=DECIMAL},
+                #{item.volume,jdbcType=DECIMAL},#{item.turnover,jdbcType=DECIMAL},#{item.amplitude,jdbcType=DECIMAL},
+                #{item.highestPrice,jdbcType=DECIMAL},#{item.lowestPrice,jdbcType=DECIMAL},
+                #{item.openingPrice,jdbcType=DECIMAL},#{item.turnoverRate,jdbcType=DECIMAL},#{item.m5Amplitude,jdbcType=DECIMAL},
+                #{item.d60Amplitude,jdbcType=DECIMAL}
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByDate">
+        delete from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR};
+    </delete>
+
 </mapper>

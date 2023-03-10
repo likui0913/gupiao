@@ -5,14 +5,8 @@ import com.google.gson.reflect.TypeToken;
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.bean.api.StockMsg;
 import com.gupiao.enums.ApiUrlPath;
-import com.gupiao.generator.domain.IndustryTransactions;
-import com.gupiao.generator.domain.StockDetail;
-import com.gupiao.generator.domain.StockMarketData;
-import com.gupiao.generator.domain.SysSetting;
-import com.gupiao.generator.mapper.IndustryTransactionsMapper;
-import com.gupiao.generator.mapper.StockDetailMapper;
-import com.gupiao.generator.mapper.StockMarketDataMapper;
-import com.gupiao.generator.mapper.SysSettingMapper;
+import com.gupiao.generator.domain.*;
+import com.gupiao.generator.mapper.*;
 import com.gupiao.service.thread.StockMarketDataIncrementalThread;
 import com.gupiao.service.thread.StockMarketDataThread;
 import com.gupiao.service.thread.StockServiceThread;
@@ -403,4 +397,6 @@ public class StockService {
         stockMarketDataMapper.batchInsert(records);
 
     }
+
+
 }

@@ -5,12 +5,16 @@ import com.gupiao.bean.api.StockMsg;
 import com.gupiao.generator.domain.IndustryTransactions;
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.domain.StockMarketRuntimeData;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 将抓取数据转成对应数据库bean
+ */
 public class BeanTransformation {
 
     public static StockDetail createStockDetailFromList(List<StockMsg> stockMsgList){
@@ -190,6 +194,132 @@ public class BeanTransformation {
         }
 
         return marketData;
+    }
+
+    public static StockMarketRuntimeData createStockMarketRuntimeDataFromList(Map<String,String> params){
+
+        StockMarketRuntimeData runtimeData = new StockMarketRuntimeData();
+
+        for ( Map.Entry<String,String> entry : params.entrySet()) {
+            switch(entry.getKey()){
+
+                /*
+                    CREATE TABLE `stock_market_runtime_data` (
+                    `trade_date` varchar(10) NOT NULL COMMENT '统计时间',
+                    `trade_time` varchar(20) NOT NULL COMMENT '统计时间',
+                    `id` bigint primary key not null auto_increment,
+                    `stock_code` varchar(60) NOT NULL COMMENT 'code编码',
+                    `stock_name` varchar(60) NOT NULL COMMENT 'code名称',
+                    `new_price` decimal(30,10) NOT NULL COMMENT '最新价',
+                    `quote_change` decimal(30,10) NOT NULL COMMENT '涨跌幅',
+                    `ups_and_downs` decimal(30,10) NOT NULL COMMENT '涨跌额',
+                    `volume` decimal(30,10) NOT NULL COMMENT '成交量',
+                    `turnover` decimal(30,10) NOT NULL COMMENT '成交额',
+                    `amplitude` decimal(30,10) NOT NULL COMMENT '振幅',
+                    `highest_price` decimal(30,10) NOT NULL COMMENT '最高价',
+                    `lowest_price` decimal(30,10) NOT NULL COMMENT '最低价',
+                    `opening_price` decimal(30,10) NOT NULL COMMENT '开盘价',
+                    `turnover_rate` decimal(30,10) NOT NULL COMMENT '换手率',
+                    `m_5_amplitude` decimal(30,10) NOT NULL COMMENT '5分钟涨跌',
+                    `d_60_amplitude` decimal(30,10) NOT NULL COMMENT '60日涨跌幅',
+                    KEY `idx_code_name` (`stock_code`,`trade_date`),
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='code实时交易数据';
+                 */
+
+                case "代码" :
+                    runtimeData.setStockCode(entry.getValue());
+                    break;
+                case "名称" :
+                    runtimeData.setStockName(entry.getValue());
+                    break;
+                case "最新价" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time2 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setNewPrice(time2);
+                    break;
+                case "涨跌幅" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time3 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setQuoteChange(time3);
+                    break;
+                case "涨跌额" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time4 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setUpsAndDowns(time4);
+                    break;
+                case "成交量" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time5 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setVolume(time5);
+                    break;
+                case "成交额" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time6 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setTurnover(time6);
+                    break;
+                case "振幅" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time7 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setAmplitude(time7);
+                    break;
+                case "最高" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time8 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setHighestPrice(time8);
+                    break;
+                case "最低" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time9 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setLowestPrice(time9);
+                    break;
+                case "今开" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time10 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setOpeningPrice(time10);
+                    break;
+                case "换手率" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time11 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setTurnoverRate(time11);
+                    break;
+                case "5分钟涨跌" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time12 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setM5Amplitude(time12);
+                    break;
+                case "60日涨跌幅" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time13 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    runtimeData.setD60Amplitude(time13);
+                    break;
+            }
+        }
+
+        return runtimeData;
     }
 
 }
