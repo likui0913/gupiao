@@ -2,11 +2,14 @@ package com.gupiao.api.controller;
 
 import com.google.gson.Gson;
 import com.gupiao.api.requestParameters.SaleDataParameter;
+import com.gupiao.api.requestParameters.StockBatchQueryParameter;
 import com.gupiao.api.requestParameters.StockParameter;
 import com.gupiao.api.response.ResponseBean;
 import com.gupiao.generator.domain.StockDetail;
+import com.gupiao.generator.domain.StockShow;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
+import com.gupiao.generator.mapper.StockShowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,9 @@ public class StockController {
 
     @Autowired
     StockMarketDataMapper stockMarketDataMapper;
+
+    @Autowired
+    StockShowMapper stockShowMapper;
 
     @RequestMapping(value="/stockDetailList",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
@@ -108,7 +114,6 @@ public class StockController {
 
     }
 
-
     @RequestMapping(value="/stock/saleDataDetail",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public Object saleDataDetail(@RequestBody SaleDataParameter stockParameter) {
@@ -123,4 +128,19 @@ public class StockController {
         return new Gson().toJson(bean);
 
     }
+
+    @RequestMapping(value="/stock/batch",method = {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public Object getStockBatch(@RequestBody StockBatchQueryParameter stockBatchQueryParameter) {
+
+        List<StockShow> res = stockShowMapper.selectByParameter( stockBatchQueryParameter.getBatch() );
+
+        ResponseBean bean = new ResponseBean();
+        bean.setMsg(res);
+        bean.setStatus(Boolean.TRUE);
+
+        return new Gson().toJson(bean);
+
+    }
+
 }

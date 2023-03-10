@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockMarketRuntimeDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockMarketRuntimeData">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="stockName" column="stock_name" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="tradeTime" column="trade_time" jdbcType="VARCHAR"/>
+            <result property="newPrice" column="new_price" jdbcType="DECIMAL"/>
+            <result property="quoteChange" column="quote_change" jdbcType="DECIMAL"/>
+            <result property="upsAndDowns" column="ups_and_downs" jdbcType="DECIMAL"/>
+            <result property="volume" column="volume" jdbcType="DECIMAL"/>
+            <result property="turnover" column="turnover" jdbcType="DECIMAL"/>
+            <result property="amplitude" column="amplitude" jdbcType="DECIMAL"/>
+            <result property="highestPrice" column="highest_price" jdbcType="DECIMAL"/>
+            <result property="lowestPrice" column="lowest_price" jdbcType="DECIMAL"/>
+            <result property="openingPrice" column="opening_price" jdbcType="DECIMAL"/>
+            <result property="turnoverRate" column="turnover_rate" jdbcType="DECIMAL"/>
+            <result property="m5Amplitude" column="m_5_amplitude" jdbcType="DECIMAL"/>
+            <result property="d60Amplitude" column="d_60_amplitude" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,stock_name,
+        trade_date,trade_time,new_price,
+        quote_change,ups_and_downs,volume,
+        turnover,amplitude,highest_price,
+        lowest_price,opening_price,turnover_rate,
+        m_5_amplitude,d_60_amplitude
+    </sql>
+    
+</mapper>

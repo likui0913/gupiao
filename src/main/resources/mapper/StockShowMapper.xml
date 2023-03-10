@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockShowMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockShow">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="batch" column="batch" jdbcType="INTEGER"/>
+            <result property="stockName" column="stock_name" jdbcType="VARCHAR"/>
+            <result property="marketTime" column="market_time" jdbcType="VARCHAR"/>
+            <result property="totalCapital" column="total_capital" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,batch
+    </sql>
+
+    <select id="selectByParameter" resultMap="BaseResultMap">
+        select ss.stock_code,ss.batch,stock_name,market_time,industry,total_capital,exchange
+        from stock_show ss
+        left join stock_detail sd on sd.stock_code = ss.stock_code
+        where ss.batch = #{batch,jdbcType=INTEGER} order by ss.id asc;
+    </select>
+
+</mapper>

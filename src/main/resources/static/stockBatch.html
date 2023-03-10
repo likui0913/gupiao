@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>N天走势计算</title>
+</head>
+
+<!-- 引入js文件 -->
+<script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.param.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+
+<body>
+
+<div>
+    批次:<input id="batch" value="1"><br>
+    <button id="query">查询</button>
+    <br>
+</div>
+
+<hr>
+<div>
+    <table id="resTable" border="1" cellspacing="0" class="show_table">
+        <tr>
+            <th>code</th>
+            <th>名称</th>
+            <th>上市时间</th>
+            <th>行业</th>
+            <th>总股本</th>
+            <th>交易所</th>
+            <th>批次</th>
+            <th>详细</th>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#query").click(function () {
+
+            //获取处理输入信息
+            var batch = document.getElementById("batch").value;
+
+            if ( null == batch ) {
+                alert("查询参数不能为null");
+                return;
+            }
+
+            //构建查询参数
+            var queryParam = {}
+            queryParam.batch = batch;
+
+            $.ajax({
+
+                url: "query/stock/batch",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json;charset=utf8",
+                async: false,
+                data: JSON.stringify(queryParam),
+                success: function (resJson) {
+                    if (resJson.status === false && resJson.msg === "未登录") {
+                        window.location.href = "index.html";
+                        return;
+                    }
+                    if (resJson.status === true) {
+                        updateTab(resJson.msg,true);
+                        return;
+                    } else {
+                        alert("后端处理失败！");
+                        return;
+                    }
+                },
+                error: function (err) {
+                }
+
+            })
+
+        });
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        //更新表内容
+        function updateTab(res, isClean) {
+
+            if (true === isClean) {
+                $("#resTable").find("tr:not(:first)").remove();
+            }
+
+            var resTable = document.getElementById('resTable');
+
+            for (var i in res) {
+
+                var newRow = resTable.insertRow();
+                newRow.insertCell(0).innerHTML = res[i].stockCode;
+                newRow.insertCell(1).innerHTML = res[i].stockName;
+                newRow.insertCell(2).innerHTML = res[i].marketTime;
+                newRow.insertCell(3).innerHTML = res[i].industry;
+                newRow.insertCell(4).innerHTML = res[i].totalCapital;
+                newRow.insertCell(5).innerHTML = res[i].exchange;
+                newRow.insertCell(6).innerHTML = res[i].batch;
+
+                const btns = newRow.insertCell(7);
+                const btn_select = document.createElement("button");
+                btn_select.setAttribute('id','showDetail');
+                btn_select.textContent = '明细';
+                btn_select.onclick = function (){
+
+                    //获取选中的code
+                    const code = this.parentNode.parentNode.cells[0].innerHTML;
+                    var codeHeadr = code.substr(0,3);
+                    var url = "";
+                    if(codeHeadr === "000" || codeHeadr === "001" || codeHeadr === "002" || codeHeadr === "003" ||
+                        codeHeadr === "300" || codeHeadr === "301"){
+                        url = "http://quote.eastmoney.com/sz" + code + ".html";
+                    }
+
+                    if(codeHeadr === "600" || codeHeadr === "601" || codeHeadr === "603" || codeHeadr === "605"){
+                        url = "http://quote.eastmoney.com/sh" + code + ".html";
+                    }
+
+                    if(codeHeadr === "688" || codeHeadr === "689"){
+                        url = "http://quote.eastmoney.com/kcb/" + code + ".html";
+                    }
+
+                    if(codeHeadr === "430" || codeHeadr === "830" || codeHeadr === "831" || codeHeadr === "832" ||
+                        codeHeadr === "833" || codeHeadr === "834"|| codeHeadr === "835" || codeHeadr === "836" ||
+                        codeHeadr === "837" || codeHeadr === "838"|| codeHeadr === "839" || codeHeadr === "870" ||
+                        codeHeadr === "871" || codeHeadr === "872"|| codeHeadr === "873" ){
+                        url = "http://quote.eastmoney.com/bj/" + code + ".html";
+                    }
+                    window.open(url,"_blank")
+                }
+                btns.appendChild(btn_select);
+            }
+        }
+    });
+</script>
+
+</body>
+
+</html>
