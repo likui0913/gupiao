@@ -1,9 +1,10 @@
 package com.gupiao.generator.mapper;
 
 import com.gupiao.generator.domain.ImitateTradeData;
-import com.gupiao.generator.domain.StockDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author kuili
@@ -22,15 +23,19 @@ public interface ImitateTradeDataMapper {
 
     /**
      * 更新
-     * @param stockDetail
+     * @param imitateTradeData
      */
-    void updateById(StockDetail stockDetail);
+    void updateById(ImitateTradeData imitateTradeData);
 
     /**
      * 删除
      * @param id
      */
     void deleteById( @Param("code") Integer id );
+
+    List<ImitateTradeData> selectAll();
+
+    ImitateTradeData selectById( @Param("code") Integer id );
 
 }
 
