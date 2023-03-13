@@ -140,8 +140,38 @@
                amplitude,quote_change,ups_and_downs,
                turnover_rate
         from stock_market_data
-        where stock_code = #{code,jdbcType=VARCHAR} and trade_date &gt; #{endDate,jdbcType=VARCHAR}
-        order by trade_date asc limit 1;
+        where stock_code = #{code,jdbcType=VARCHAR}
+          and trade_date &gt; #{endDate,jdbcType=VARCHAR}
+        order by trade_date
+        asc limit 1;
     </select>
+
+    <select id="selectCalculateResultByDate" resultMap="BaseResultMap">
+
+        select smd1.stock_code as stock_code,
+               max(closing_price),
+               min(closing_price),
+               avg(abs(closing_price)) as closing_price_p ,
+               avg(abs(turnover_rate)) as turnover_rate_p,
+               tmp.up_days
+        from stock_market_data smd1
+        left join (
+            select stock_code,sum(if(ups_and_downs > 0,1,0)) as up_days
+            from stock_market_data
+            where trade_date &gt;= #{startDate,jdbcType=VARCHAR}
+              and trade_date &lt;= #{endDate,jdbcType=VARCHAR}
+            group by stock_code
+        ) as tmp on tmp.stock_code = smd1.stock_code
+        where smd1.trade_date &gt;= #{startDate,jdbcType=VARCHAR}
+          and smd1.trade_date &lt;= #{endDate,jdbcType=VARCHAR}
+          and tmp.up_days &gt;= 5
+          and tmp.up_days &lt;= 6
+        group by smd1.stock_code
+        having turnover_rate_p > 2
+        order by turnover_rate_p asc
+        limit 100;
+
+    </select>
+
 
 </mapper>

@@ -64,4 +64,8 @@
         delete from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR};
     </delete>
 
+    <select id="selectCountByDate" resultType="java.lang.Integer">
+        select count(1) from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR};
+    </select>
+
 </mapper>

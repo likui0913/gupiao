@@ -26,17 +26,12 @@ public class CleanTask {
      * 清理过期session信息
      */
     @Scheduled(fixedDelay = 1000 * 60 * 30)
-    @Async
+    @Async(value="asyncExecutor")
     public void cleanTimeoutSession(){
         try{
 
             Long now = System.currentTimeMillis();
-            Iterator<Map.Entry<String, Long>> iterator = WebLoadAop.cache.entrySet().iterator();
-            while (iterator.hasNext()) {
-                if ( (now - iterator.next().getValue()) > 1000*60*30) {
-                    iterator.remove();
-                }
-            }
+            WebLoadAop.cache.entrySet().removeIf(stringLongEntry -> (now - stringLongEntry.getValue()) > 1000 * 60 * 30);
 
         }catch (Exception e){
             log.error("cleanTimeoutSession 出现错误！",e);

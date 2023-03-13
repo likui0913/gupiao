@@ -1,0 +1,122 @@
+[2023-03-13 14:36:20.724] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 15706 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 14:36:20.725] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 14:36:21.299] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 14:36:21.303] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 14:36:21.304] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 14:36:21.304] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 14:36:21.342] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 14:36:21.342] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 598 ms
+[2023-03-13 14:36:21.578] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 14:36:21.660] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 14:36:21.680] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 14:36:21.681] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 14:36:21.801] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 14:36:21.949] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 14:36:21.961] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 14:36:21.969] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.423 seconds (JVM running for 1.658)
+[2023-03-13 14:36:21.971] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T14:36:21.971
+[2023-03-13 14:36:21.975] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 14:54:47.872] [INFO ] [async-3] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockNowTradeData] [127] - 开始刷新全量实时交易信息,date:2023-03-13T14:54:47.872
+[2023-03-13 14:54:52.549] [INFO ] [async-3] [com.gupiao.service.UpdateStockDailySaleService] [renovateNowTradeDate] [221] - 刷新实时全量数据，条数:5316
+[2023-03-13 22:18:21.342] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:18:21.345] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.
+[2023-03-13 22:22:24.264] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 17094 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 22:22:24.265] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 22:22:24.797] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 22:22:24.801] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:22:24.801] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 22:22:24.801] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 22:22:24.834] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 22:22:24.834] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 549 ms
+[2023-03-13 22:22:25.069] [INFO ] [Thread-5] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 22:22:25.146] [INFO ] [Thread-5] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 22:22:25.166] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 22:22:25.169] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 22:22:25.276] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 22:22:25.415] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:22:25.425] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 22:22:25.432] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.369 seconds (JVM running for 1.633)
+[2023-03-13 22:22:25.434] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T22:22:25.434
+[2023-03-13 22:22:25.438] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 22:22:33.631] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:22:33.634] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.
+[2023-03-13 22:28:58.707] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 17493 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 22:28:58.708] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 22:28:59.253] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 22:28:59.257] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:28:59.258] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 22:28:59.258] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 22:28:59.289] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 22:28:59.290] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 563 ms
+[2023-03-13 22:28:59.529] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 22:28:59.605] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 22:28:59.625] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 22:28:59.627] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 22:28:59.735] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 22:28:59.873] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:28:59.883] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 22:28:59.891] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.36 seconds (JVM running for 1.595)
+[2023-03-13 22:28:59.893] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T22:28:59.893
+[2023-03-13 22:28:59.898] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 22:29:13.593] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:29:13.597] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.
+[2023-03-13 22:34:06.607] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 17803 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 22:34:06.609] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 22:34:07.179] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 22:34:07.185] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:34:07.185] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 22:34:07.185] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 22:34:07.225] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 22:34:07.226] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 597 ms
+[2023-03-13 22:34:07.481] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 22:34:07.560] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 22:34:07.580] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 22:34:07.581] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 22:34:07.696] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 22:34:07.832] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:34:07.843] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 22:34:07.851] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.45 seconds (JVM running for 1.731)
+[2023-03-13 22:34:07.852] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T22:34:07.852
+[2023-03-13 22:34:07.855] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 22:34:20.004] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:34:20.007] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.
+[2023-03-13 22:36:02.040] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 17927 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 22:36:02.042] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 22:36:02.603] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 22:36:02.607] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:36:02.608] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 22:36:02.608] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 22:36:02.644] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 22:36:02.644] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 581 ms
+[2023-03-13 22:36:02.887] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 22:36:02.957] [INFO ] [main] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 22:36:02.978] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 22:36:02.979] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 22:36:03.093] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 22:36:03.231] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:36:03.243] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 22:36:03.251] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.427 seconds (JVM running for 1.695)
+[2023-03-13 22:36:03.253] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T22:36:03.253
+[2023-03-13 22:36:03.256] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 22:36:18.324] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:36:18.327] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.
+[2023-03-13 22:38:36.454] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarting] [55] - Starting GupiaoApplication using Java 1.8.0_345 on likuideMacBook-Pro.local with PID 18096 (/Users/kuili/source-code/gupiao-github/target/classes started by kuili in /Users/kuili/source-code/gupiao-github)
+[2023-03-13 22:38:36.455] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStartupProfileInfo] [634] - No active profile set, falling back to 1 default profile: "default"
+[2023-03-13 22:38:37.011] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [initialize] [108] - Tomcat initialized with port(s): 80 (http)
+[2023-03-13 22:38:37.016] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Initializing ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:38:37.016] [INFO ] [main] [org.apache.catalina.core.StandardService] [log] [173] - Starting service [Tomcat]
+[2023-03-13 22:38:37.016] [INFO ] [main] [org.apache.catalina.core.StandardEngine] [log] [173] - Starting Servlet engine: [Apache Tomcat/9.0.65]
+[2023-03-13 22:38:37.050] [INFO ] [main] [o.a.c.core.ContainerBase.[Tomcat].[localhost].[/]] [log] [173] - Initializing Spring embedded WebApplicationContext
+[2023-03-13 22:38:37.050] [INFO ] [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] [prepareWebApplicationContext] [292] - Root WebApplicationContext: initialization completed in 576 ms
+[2023-03-13 22:38:37.296] [INFO ] [Thread-5] [com.zaxxer.hikari.HikariDataSource] [getConnection] [110] - HikariPool-1 - Starting...
+[2023-03-13 22:38:37.363] [INFO ] [Thread-5] [com.zaxxer.hikari.HikariDataSource] [getConnection] [123] - HikariPool-1 - Start completed.
+[2023-03-13 22:38:37.381] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [37] - DATA_URL_PATH_SETTING=remote
+[2023-03-13 22:38:37.383] [INFO ] [main] [com.gupiao.config.LoadConfigFromDb] [init] [45] - PIC_PATH_SETTING=/Users/kuili/source-code/gupiao-github/pic/
+[2023-03-13 22:38:37.517] [INFO ] [main] [o.s.b.a.web.servlet.WelcomePageHandlerMapping] [<init>] [53] - Adding welcome page: class path resource [static/index.html]
+[2023-03-13 22:38:37.673] [INFO ] [main] [org.apache.coyote.http11.Http11NioProtocol] [log] [173] - Starting ProtocolHandler ["http-nio-0.0.0.0-80"]
+[2023-03-13 22:38:37.684] [INFO ] [main] [o.s.boot.web.embedded.tomcat.TomcatWebServer] [start] [220] - Tomcat started on port(s): 80 (http) with context path ''
+[2023-03-13 22:38:37.692] [INFO ] [main] [com.gupiao.GupiaoApplication] [logStarted] [61] - Started GupiaoApplication in 1.418 seconds (JVM running for 1.654)
+[2023-03-13 22:38:37.694] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [53] - 开始增量刷新全部Code历史交易信息,date:2023-03-13T22:38:37.694
+[2023-03-13 22:38:37.697] [INFO ] [async-2] [com.gupiao.xjob.UpdateFullStockUpdateTask] [updateStockSaleData] [57] - 配置未开启,结束增量刷新全部Code历史交易信息
+[2023-03-13 22:38:52.383] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [350] - HikariPool-1 - Shutdown initiated...
+[2023-03-13 22:38:52.386] [INFO ] [SpringApplicationShutdownHook] [com.zaxxer.hikari.HikariDataSource] [close] [352] - HikariPool-1 - Shutdown completed.

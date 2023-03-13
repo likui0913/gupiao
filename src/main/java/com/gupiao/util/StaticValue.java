@@ -17,11 +17,30 @@ public class StaticValue {
     public static String PIC_PATH_SETTING = "/Users/kuili/source-code/gupiao-github/pic/";
     public static String DATA_URL_PATH_REMOTE = "http://8.130.68.34:443/";
     public static String DATA_URL_PATH_LOCAL = "http://127.0.0.1:443/";
+
+    /**
+     * 获取访问数据Url
+     *
+     * @return
+     */
     public static String getDateUrlPath(){
         if("remote".equals(DATA_URL_PATH_SETTING)){
             return DATA_URL_PATH_REMOTE;
         }else {
             return DATA_URL_PATH_LOCAL;
+        }
+    }
+
+    /**
+     * 获取运行环境名称
+     *
+     * @return
+     */
+    public static String getEnvName(){
+        if("remote".equals(DATA_URL_PATH_SETTING)){
+            return "开发环境";
+        }else {
+            return "线上环境";
         }
     }
 

@@ -2,10 +2,7 @@ package com.gupiao.xjob;
 
 import com.gupiao.generator.domain.SysSetting;
 import com.gupiao.generator.mapper.SysSettingMapper;
-import com.gupiao.service.StockService;
-import com.gupiao.service.UpdateStockDailySaleService;
-import com.gupiao.service.UpdateStockListService;
-import com.gupiao.service.UpdateStockNetFlowService;
+import com.gupiao.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -38,13 +35,21 @@ public class UpdateFullStockUpdateTask {
     @Autowired
     UpdateStockNetFlowService updateStockNetFlowService;
 
+    @Autowired
+    CalculateService calculateService;
+
     ReentrantLock lock = new ReentrantLock();
 
+    /**
+     * 刷新股票的交易信息
+     */
     @Scheduled(fixedDelay = 1000*60*60)
+    @Scheduled(cron = "0 10 15 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockSaleData(){
 
         try{
+
             log.info("开始增量刷新全部Code历史交易信息,date:" + LocalDateTime.now());
 
             SysSetting setting = sysSettingMapper.selectByCode("updateStockSaleDataIsOn");
@@ -62,10 +67,13 @@ public class UpdateFullStockUpdateTask {
 
     }
 
-    //每个6个小时更新1次
-    @Scheduled(fixedDelay = 1000*60*60*6)
+    /**
+     * 更新全量股票元数据信息
+     */
+    @Scheduled(cron = "0 30 9 * * ?")
     @Async(value="asyncExecutor")
     public void updateAllStockMsg(){
+
         try{
 
             log.info("开始刷新全部Code基础信息,date:" + LocalDateTime.now());
@@ -73,8 +81,8 @@ public class UpdateFullStockUpdateTask {
             //为了避免出问题，只在后半夜执行
             LocalDateTime now = LocalDateTime.now();
             int hour = now.getHour();
-            if(hour > 6){
-                log.info("退出刷新全部Code基础信息，时间不符合要求,date:" + LocalDateTime.now());
+            if(hour > 6 && 14 > hour){
+                log.info("退出刷新全部Code基础信息，时间不符合要求,要求小于6点-或者大于15点,date:" + LocalDateTime.now());
                 return;
             }
             SysSetting setting = sysSettingMapper.selectByCode("updateAllStockMsgIsOn");
@@ -82,14 +90,19 @@ public class UpdateFullStockUpdateTask {
                 log.info("配置未开启,完成刷新全部Code基础信息");
                 return;
             }
-            this.getAllStock();
+            updateAllStockMsg.updateAllStockMsg();
             log.info("完成刷新全部Code基础信息,date:" + LocalDateTime.now());
+
         }catch (Exception e){
             log.error("刷新全部Code基础信息出现错误！！！",e);
         }
+
     }
 
-    @Scheduled(fixedDelay = 1000*60*30)
+    /**
+     * 更新南北向资金流信息
+     */
+    @Scheduled(cron = "0 0 16 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockMoneyFlowDate(){
         try{
@@ -102,30 +115,33 @@ public class UpdateFullStockUpdateTask {
         }
     }
 
-    @Scheduled(cron = "0 30 14 * * ?")
+    /**
+     * 更新每天的实时交易数据
+     */
+    @Scheduled(cron = "0 38 14 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockNowTradeData(){
+
         try{
 
             log.info("开始刷新全量实时交易信息,date:" + LocalDateTime.now());
-
             SysSetting setting = sysSettingMapper.selectByCode("updateRuntimeStockTradeData");
             if(null == setting || "0".equals(setting.getSysValue())) {
                 log.info("配置未开启,退出刷新全量实时交易信息");
                 return;
             }
+
+            //1.刷新当前实时交易信息
             updateStockDailySaleService.renovateNowTradeDate();
+
+            //2.计算推算出的股票信息
+            calculateService.calculateTomorrowStock();
+
             log.info("结束刷新全量实时交易信,date:" + LocalDateTime.now());
+
         }catch (Exception e){
             log.error("updateStockNowTradeData 出现错误！",e);
         }
-    }
-
-    private void getAllStock(){
-        updateAllStockMsg.updateAllStockMsg();
-    }
-
-    public static void main(String[] args) {
 
     }
 

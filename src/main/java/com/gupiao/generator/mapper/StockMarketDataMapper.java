@@ -56,6 +56,10 @@ public interface StockMarketDataMapper {
             @Param("startDate") String startDate,
             @Param("limited") Integer limited);
 
+    List<StockMarketData> selectCalculateResultByDate(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate);
+
 }
 
 

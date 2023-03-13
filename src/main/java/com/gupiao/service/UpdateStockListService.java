@@ -12,6 +12,7 @@ import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.util.BeanTransformation;
+import com.gupiao.util.DingUtil;
 import com.gupiao.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class UpdateStockListService {
         log.info("更新全部Code信息，处理中国全部Code，花费 " + (System.currentTimeMillis()-startTime)/1000 + " 秒");
         updateUSAStockMsg(localAllStock);
         Long endTime = System.currentTimeMillis();
+        DingUtil.sendDingTalk("更新全部Code信息完成，花费 " + (endTime-startTime)/1000 + " 秒");
         log.info("更新全部Code信息完成，花费 " + (endTime-startTime)/1000 + " 秒");
     }
 

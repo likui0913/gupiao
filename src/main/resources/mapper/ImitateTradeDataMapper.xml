@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.ImitateTradeDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.ImitateTradeData">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeInDate" column="trade_in_date" jdbcType="VARCHAR"/>
+            <result property="tradeOutDate" column="trade_out_date" jdbcType="VARCHAR"/>
+            <result property="tradeInPrice" column="trade_in_price" jdbcType="DECIMAL"/>
+            <result property="tradeOutPrice" column="trade_out_price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_name,stock_code,
+        trade_in_date,trade_out_date,trade_in_price,
+        trade_out_price
+    </sql>
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockDetail" useGeneratedKeys="true">
+        insert into imitate_trade_data(stock_code,stock_type,exchange,stock_name,market_time,
+                                 industry,total_capital,circulating_capital,
+                                 total_capitalization,circulating_capitalization,is_focus)
+        values(#{stockCode,jdbcType=VARCHAR},#{stockType,jdbcType=INTEGER},#{exchange,jdbcType=VARCHAR},#{stockName,jdbcType=VARCHAR},#{marketTime,jdbcType=VARCHAR},
+               #{industry,jdbcType=VARCHAR},#{totalCapital,jdbcType=DECIMAL},#{circulatingCapital,jdbcType=DECIMAL},
+               #{totalCapitalization,jdbcType=DECIMAL},#{circulatingCapitalization,jdbcType=DECIMAL},#{isFocus,jdbcType=INTEGER})
+    </insert>
+
+
+    <update id="updateById">
+        update imitate_trade_data set
+            exchange = #{exchange,jdbcType=VARCHAR},
+            stock_name = #{stockName,jdbcType=VARCHAR},
+            market_time = #{marketTime,jdbcType=VARCHAR},
+            industry = #{industry,jdbcType=VARCHAR},
+            total_capital = #{totalCapital,jdbcType=DECIMAL},
+            circulating_capital = #{circulatingCapital,jdbcType=DECIMAL},
+            total_capitalization = #{totalCapitalization,jdbcType=DECIMAL},
+            circulating_capitalization = #{circulatingCapitalization,jdbcType=DECIMAL}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByDate">
+        delete from imitate_trade_data where id = #{id,jdbcType=INTEGER};
+    </delete>
+
+</mapper>

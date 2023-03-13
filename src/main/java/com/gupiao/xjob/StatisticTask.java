@@ -32,9 +32,10 @@ public class StatisticTask {
     /**
      * 计算每天固定时间间隔的价格差值
      */
-    @Scheduled(fixedDelay = 1000*60*60)
+    @Scheduled(cron = "0 30 15 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockSaleData(){
+
         try{
             log.info("开始统计历史交易信息,date:" + LocalDateTime.now());
 
@@ -62,14 +63,16 @@ public class StatisticTask {
         }catch (Exception e){
             log.error("StatisticTask 出现错误！",e);
         }
+
     }
 
     /**
      * 计算每天两个固定时间间隔的价格差值，第一个时间差值是N天，第二个是M天，用M/N观察股票的上涨和下跌走势
      */
-    @Scheduled(fixedDelay = 1000*60*60)
+    @Scheduled(cron = "0 30 15 * * ?")
     @Async(value="asyncExecutor")
     public void computeTowDayDiffData(){
+
         try{
 
             log.info("开始统计两段时间差值交易信息,date:" + LocalDateTime.now());
@@ -96,6 +99,7 @@ public class StatisticTask {
         }catch (Exception e){
             log.error("StatisticTask 出现错误！",e);
         }
+
     }
 
 }

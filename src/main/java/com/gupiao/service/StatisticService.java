@@ -9,6 +9,7 @@ import com.gupiao.generator.domain.*;
 import com.gupiao.generator.mapper.*;
 import com.gupiao.service.thread.StockMarketDataThread;
 import com.gupiao.util.DateUtils;
+import com.gupiao.util.DingUtil;
 import com.gupiao.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,14 +71,14 @@ public class StatisticService {
      */
     public void computeNDayStaticData(List<Integer> days){
 
-        Long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         //1.获取全量股票信息，获取当前时间
         List<StockDetail> localAllStock = getLocalAllStock();
         //2.获取当前时间
         String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
 
-        Integer computeCount = 0,errorCount = 0;
+        int computeCount = 0,errorCount = 0;
         for (StockDetail sd:localAllStock) {
 
             if(sd.getStockType().equals(1)){
@@ -95,7 +96,7 @@ public class StatisticService {
             }
 
         }
-
+        DingUtil.sendDingTalk("computeNDayStaticData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
         log.info("computeNDayStaticData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
         log.info("computeNDayStaticData 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
 
@@ -107,14 +108,14 @@ public class StatisticService {
      */
     public void computeTwoDayDiffPriceData(List<String> days){
 
-        Long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         //1.获取全量股票信息，获取当前时间
         List<StockDetail> localAllStock = getLocalAllStock();
         //2.获取当前时间
         String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
 
-        Integer computeCount = 0,errorCount = 0;
+        int computeCount = 0,errorCount = 0;
         for (StockDetail sd:localAllStock) {
 
             if(sd.getStockType().equals(1)){
@@ -132,7 +133,7 @@ public class StatisticService {
             }
 
         }
-
+        DingUtil.sendDingTalk("computeTwoDayDiffPriceData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
         log.info("computeTwoDayDiffPriceData 处理完成，computeCount=" + computeCount + ",errorCount=" + errorCount);
         log.info("computeTwoDayDiffPriceData 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
 

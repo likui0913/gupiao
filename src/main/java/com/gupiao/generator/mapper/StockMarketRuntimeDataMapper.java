@@ -19,6 +19,8 @@ public interface StockMarketRuntimeDataMapper {
 
     void deleteByDate(@Param("date") String date);
 
+    Integer selectCountByDate(@Param("date") String date);
+
 }
 
 

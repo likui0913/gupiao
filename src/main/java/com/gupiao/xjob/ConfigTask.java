@@ -47,12 +47,12 @@ public class ConfigTask {
             LogUtil.deleteLogSwitchByKey(key);
             return;
         }
-         if(setting.getSysValue().toLowerCase().equals("false") ||
-                 setting.getSysValue().toLowerCase().equals("0")){
+         if(setting.getSysValue().equalsIgnoreCase("false") ||
+                 setting.getSysValue().equalsIgnoreCase("0")){
              LogUtil.setLogSwitchByKey(key,Boolean.FALSE);
              //log.info("set key=" + key + " value=false");
-         }else if(setting.getSysValue().toLowerCase().equals("true") ||
-                 setting.getSysValue().toLowerCase().equals("1")){
+         }else if(setting.getSysValue().equalsIgnoreCase("true") ||
+                 setting.getSysValue().equalsIgnoreCase("1")){
              LogUtil.setLogSwitchByKey(key,Boolean.TRUE);
              //log.info("set key=" + key + " value=true");
          }

@@ -11,12 +11,14 @@ import com.gupiao.generator.mapper.IndustryTransactionsMapper;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.SysSettingMapper;
+import com.gupiao.service.CalculateService;
 import com.gupiao.service.HttpService;
 import com.gupiao.service.StatisticService;
 import com.gupiao.service.StockService;
 import com.gupiao.util.BeanTransformation;
 import com.gupiao.util.StaticValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,16 +52,15 @@ public class Test {
     @Autowired
     StatisticService statisticService;
 
+    @Autowired
+    CalculateService calculateService;
+
     @RequestMapping("/test")
     @ResponseBody
     public String index() {
 
-        Integer count = 0;
-        List<StockDetail> stockDetailList = stockService.updateAllStockMsg(100);
-        for (StockDetail detail: stockDetailList) {
-            count ++;
-        }
-        return "ok:" + count.toString();
+        calculateService.calculateTomorrowStock();
+        return "ok";
     }
 
     @RequestMapping("/test2")

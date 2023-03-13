@@ -9,10 +9,7 @@ import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.domain.StockMarketRuntimeData;
 import com.gupiao.generator.domain.SysSetting;
 import com.gupiao.generator.mapper.*;
-import com.gupiao.util.BeanTransformation;
-import com.gupiao.util.DateUtils;
-import com.gupiao.util.LogUtil;
-import com.gupiao.util.StaticValue;
+import com.gupiao.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,6 +37,7 @@ public class UpdateStockDailySaleService {
     StockMarketRuntimeDataMapper stockMarketRuntimeDataMapper;
 
     public void updateAllStockDailySale(){
+
         Long startTime = System.currentTimeMillis();
         List<StockDetail> localAllStock = getLocalAllStock();
         Integer updateCount = 0,jumpCount = 0,errorCount = 0;
@@ -62,7 +60,9 @@ public class UpdateStockDailySaleService {
             }
 
         }
-        log.info("updateAllStockDailySale 处理完成，updateCount=" + updateCount + ",jumpCount=" + jumpCount + ",errorCount=" + errorCount);
+        String updateMsg = "updateCount=" + updateCount + ",jumpCount=" + jumpCount + ",errorCount=" + errorCount;
+        DingUtil.sendDingTalk("更新股票交易信息完成:" + updateMsg);
+        log.info("updateAllStockDailySale 处理完成," + updateMsg);
         log.info("updateAllStockDailySale 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
 
     }
@@ -97,25 +97,24 @@ public class UpdateStockDailySaleService {
      */
     protected Integer updateChinaStockByCode(StockDetail stockDetail) throws Exception {
 
-        //SysSetting setting = this.getSaleDateOrCreateByCode(stockDetail);
         //从数据库读取最新的数据
         StockMarketData data = stockMarketDataMapper.selectMaxDate(stockDetail.getStockCode());
+        //dbEndDate代表数据库内已有的最新的数据
         String dbEndDate = StaticValue.STOCK_DAILY_SALE_DATE_DEFAULT;
         if(null != data){
             dbEndDate = data.getTradeDate();
         }
         String endDateNow = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
-        String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
-        //计算从默认值到t-1的天数
-        Integer dayDiff = DateUtils.daysDiff(dbEndDate,endDateT_1,DateUtils.DATE_FORMATE5);
+        //String endDateT_1 = DateUtils.dateAddDays(endDateNow,DateUtils.DATE_FORMATE5, -1L);
+        //计算从默认值到当前的天数
+        Integer dayDiff = DateUtils.daysDiff(dbEndDate,endDateNow,DateUtils.DATE_FORMATE5);
         if( dayDiff <= 0){
             return 1;
         }
+        //dbEndDate代表数据库内已经有的最后一条数据，更新数据时要以dbEndDate+1为开始时间
         dbEndDate = DateUtils.dateAddDays(dbEndDate,DateUtils.DATE_FORMATE5,1L);
-        List<StockMarketData> stockMarketDataList = this.getChinaSaleByDateAndCode(stockDetail.getStockCode(),dbEndDate,endDateT_1);
+        List<StockMarketData> stockMarketDataList = this.getChinaSaleByDateAndCode(stockDetail.getStockCode(),dbEndDate,endDateNow);
         this.insertStockSaleDataToDb(stockMarketDataList);
-        //setting.setSysValue(endDateNow);
-        //this.updateStockDailySettingByCode(setting);
         return 0;
 
     }
@@ -162,7 +161,6 @@ public class UpdateStockDailySaleService {
             log.info("getChinaSaleByDateAndCode--params:{},url:{}",params,ApiUrlPath.STOCK_ZH_A_HIST);
         }
         String res = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_HIST, params);
-        //log.info("params:{},url:{},res.length:{}",params,ApiUrlPath.STOCK_ZH_A_HIST,res.length());
         List<Map<String, String>> resList = new Gson().fromJson(res, new TypeToken<List<Map<String, String>>>() {}.getType());
         List<StockMarketData> records = new LinkedList<>();
         for (Map<String,String> map: resList) {
@@ -218,6 +216,8 @@ public class UpdateStockDailySaleService {
         //4 全量数据写入
         stockMarketRuntimeDataMapper.batchInsert(res);
 
+        //5 发送通知并记录日志
+        DingUtil.sendDingTalk("刷新实时全量数据完成，条数:" + res.size());
         log.info("刷新实时全量数据，条数:" + res.size());
 
     }
@@ -241,13 +241,4 @@ public class UpdateStockDailySaleService {
         return res;
     }
 
-    public static void main(String[] args) {
-        List<Map<String, String>> resList = new Gson().fromJson("[]", new TypeToken<List<Map<String, String>>>() {}.getType());
-        List<StockMarketData> records = new LinkedList<>();
-        for (Map<String,String> map: resList) {
-            StockMarketData b = BeanTransformation.createStockMarketDataFromList(map);
-            b.setStockCode("111");
-            records.add(b);
-        }
-    }
 }
