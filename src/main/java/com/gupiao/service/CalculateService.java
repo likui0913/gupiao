@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Date;
@@ -65,7 +66,7 @@ public class CalculateService {
 
         this.getDingDingMsg(res);
 
-        //this.sendUpAndDown();
+        this.sendUpAndDown();
 
         this.sendDownStock();
 
@@ -96,7 +97,13 @@ public class CalculateService {
             if( null == stockDetail){
                 continue;
             }
+
             StockMarketRuntimeData runtimeData = stockMarketRuntimeDataMapper.selectByDateAndCode(nowDate,marketData.getStockCode());
+            if(null != runtimeData){
+                if(runtimeData.getNewPrice().compareTo(BigDecimal.valueOf(30)) > 0){
+                    continue;
+                }
+            }
             msg += "code:" + marketData.getStockCode() + "\n";
             msg += "名称:" + stockDetail.getStockName() + "\n";
             msg += "实时价格:" + (null == runtimeData ? "----" : runtimeData.getNewPrice()) + "\n";
@@ -106,12 +113,23 @@ public class CalculateService {
             msg += "---------------------------\n";
             i++;
 
+            //每组5个，太多了会导致解析失败
             if(i >= 5){
                 groupId++;
                 i=0;
                 log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
                 msg = "[GP]通知: \n 第" + groupId + "组 \n";
+                //避免钉钉消息乱序，此处睡眠一下
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
+            }
+
+            //发送10组就退出
+            if(groupId > 10){
+                break;
             }
 
         }
@@ -122,9 +140,13 @@ public class CalculateService {
 
     public void sendUpAndDown(){
 
-        StockMarketRuntimeData stockMarketRuntimeData = stockMarketRuntimeDataMapper.selectByP(
-                DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5)
-        );
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        List<String> createTimeList= stockMarketRuntimeDataMapper.getCreateTimeByDate(nowDate);
+        if(null == createTimeList || createTimeList.size() == 0){
+            return;
+        }
+
+        StockMarketRuntimeData stockMarketRuntimeData = stockMarketRuntimeDataMapper.selectByP(nowDate,createTimeList.get(0));
 
         if(null == stockMarketRuntimeData){
             DingUtil.sendDingTalk("[GP]通知: 当天涨跌统计结果均为0");
@@ -170,6 +192,10 @@ public class CalculateService {
                 log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
                 msg = "[GP]通知: \n 下跌最严重stock[ "+groupId+"]\n";
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
             }
 
         }

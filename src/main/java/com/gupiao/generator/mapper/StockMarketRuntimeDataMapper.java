@@ -22,7 +22,7 @@ public interface StockMarketRuntimeDataMapper {
 
     Integer selectCountByDate(@Param("date") String date);
 
-    StockMarketRuntimeData selectByP( @Param("date") String date );
+    StockMarketRuntimeData selectByP( @Param("date") String date, @Param("time") String time);
 
     StockMarketRuntimeData selectByDateAndCode( @Param("date") String date,@Param("code") String code );
 

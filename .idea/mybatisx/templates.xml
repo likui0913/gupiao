@@ -64,8 +64,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="StockMarketTowDayDiffData" />
-                  <option name="tableName" value="stock_market_tow_day_diff_data" />
+                  <option name="className" value="ImitateTradeData" />
+                  <option name="tableName" value="imitate_trade_data" />
                 </TableUIInfo>
               </list>
             </option>

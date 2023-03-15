@@ -73,9 +73,9 @@
 
     <select id="selectByP" resultMap="BaseResultMap">
         select sum( if(ups_and_downs > 0 , 1, 0) ) as up_count,
-        sum( if(ups_and_downs &lt; 0 , 0, 1) ) as down_count
-        from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR}
-        group by stock_code;
+        sum( if(ups_and_downs &lt; 0 , 1, 0) ) as down_count
+        from stock_market_runtime_data
+        where trade_date = #{date,jdbcType=VARCHAR} and trade_time = #{time,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByDateAndCode" resultMap="BaseResultMap">
@@ -88,7 +88,12 @@
 
 
     <select id="selectDownStock" resultMap="BaseResultMap">
-        select *
+        select id,stock_code,stock_name,
+               trade_date,trade_time,new_price,
+               quote_change,ups_and_downs,volume,
+               turnover,amplitude,highest_price,
+               lowest_price,opening_price,turnover_rate,
+               m_5_amplitude,d_60_amplitude
         from stock_market_runtime_data
         where trade_date = #{date,jdbcType=VARCHAR} and trade_time = #{time,jdbcType=VARCHAR}
         order by quote_change asc
@@ -96,7 +101,7 @@
     </select>
 
 
-    <select id="getCreateTimeByDate" resultMap="BaseResultMap">
+    <select id="getCreateTimeByDate" resultType="java.lang.String">
         select distinct(trade_time) as trade_time
         from stock_market_runtime_data smd1
         where smd1.trade_date = #{date,jdbcType=VARCHAR}

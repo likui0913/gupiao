@@ -155,6 +155,7 @@
                avg(abs(turnover_rate)) as turnover_rate_p,
                tmp.up_days
         from stock_market_data smd1
+        left join stock_detail sd on sd.stock_code = smd1.stock_code
         left join (
             select stock_code,sum(if(ups_and_downs > 0,1,0)) as up_days
             from stock_market_data
@@ -162,14 +163,14 @@
               and trade_date &lt;= #{endDate,jdbcType=VARCHAR}
             group by stock_code
         ) as tmp on tmp.stock_code = smd1.stock_code
-        where smd1.trade_date &gt;= #{startDate,jdbcType=VARCHAR}
+        where sd.stock_name not like '%st%'
+          and smd1.trade_date &gt;= #{startDate,jdbcType=VARCHAR}
           and smd1.trade_date &lt;= #{endDate,jdbcType=VARCHAR}
           and tmp.up_days &gt;= 5
           and tmp.up_days &lt;= 6
         group by smd1.stock_code
         having turnover_rate_p > 2
-        order by turnover_rate_p asc
-        limit 50;
+        order by turnover_rate_p asc;
 
     </select>
 
