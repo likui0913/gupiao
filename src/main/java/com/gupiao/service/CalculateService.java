@@ -2,6 +2,7 @@ package com.gupiao.service;
 
 import com.gupiao.generator.domain.StockDetail;
 import com.gupiao.generator.domain.StockMarketData;
+import com.gupiao.generator.domain.StockMarketRuntimeData;
 import com.gupiao.generator.mapper.StockDetailMapper;
 import com.gupiao.generator.mapper.StockMarketDataMapper;
 import com.gupiao.generator.mapper.StockMarketRuntimeDataMapper;
@@ -62,13 +63,12 @@ public class CalculateService {
         //3.生成推断结果
         List<StockMarketData> res = stockMarketDataMapper.selectCalculateResultByDate(startDate,endDate);
 
-        //4.补充发送信息
-        if( null == res || res.size() < 1 ){
-            DingUtil.sendDingTalk( "推断信息生成失败！！！" );
-            return;
-        }
-
         this.getDingDingMsg(res);
+
+        //this.sendUpAndDown();
+
+        this.sendDownStock();
+
     }
 
     /**
@@ -78,8 +78,17 @@ public class CalculateService {
      */
     public String getDingDingMsg( List<StockMarketData> res ){
 
-        String msg = "[GP]通知: \n";
+        //4.补充发送信息
+        if( null == res || res.size() < 1 ){
+            DingUtil.sendDingTalk( "推断信息生成失败！！！" );
+            return "";
+        }
+
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         int i = 0;
+        int groupId = 1;
+        String msg = "[GP]通知: \n 第" + groupId + "组 \n";
+
         //组装信息
         for (StockMarketData marketData:res) {
 
@@ -87,17 +96,22 @@ public class CalculateService {
             if( null == stockDetail){
                 continue;
             }
+            StockMarketRuntimeData runtimeData = stockMarketRuntimeDataMapper.selectByDateAndCode(nowDate,marketData.getStockCode());
             msg += "code:" + marketData.getStockCode() + "\n";
-            msg += "name:" + stockDetail.getStockName() + "\n";
+            msg += "名称:" + stockDetail.getStockName() + "\n";
+            msg += "实时价格:" + (null == runtimeData ? "----" : runtimeData.getNewPrice()) + "\n";
+            msg += "波动幅度:" + (null == runtimeData ? "----" : runtimeData.getUpsAndDowns()) + "\n";
+            msg += "换手率:" + (null == runtimeData ? "----" : runtimeData.getTurnoverRate()) + "\n";
             msg += "url:" + Util.getUrlByCode( marketData.getStockCode() ) + "\n";
-            msg += "-----------------------------------\n";
+            msg += "---------------------------\n";
             i++;
 
             if(i >= 5){
+                groupId++;
+                i=0;
                 log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
-                i=0;
-                msg = "[GP]通知: \n";
+                msg = "[GP]通知: \n 第" + groupId + "组 \n";
             }
 
         }
@@ -105,5 +119,63 @@ public class CalculateService {
         return msg;
 
     }
+
+    public void sendUpAndDown(){
+
+        StockMarketRuntimeData stockMarketRuntimeData = stockMarketRuntimeDataMapper.selectByP(
+                DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5)
+        );
+
+        if(null == stockMarketRuntimeData){
+            DingUtil.sendDingTalk("[GP]通知: 当天涨跌统计结果均为0");
+        }else{
+            DingUtil.sendDingTalk("[GP]通知: 今天上涨个数:" + stockMarketRuntimeData.getUpCount() +
+                    "\n今天下跌个数为:" + stockMarketRuntimeData.getDownCount());
+        }
+
+    }
+
+    public void sendDownStock(){
+
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+        List<String> createTimeList= stockMarketRuntimeDataMapper.getCreateTimeByDate(nowDate);
+        if(null == createTimeList || createTimeList.size() == 0){
+            return;
+        }
+        List<StockMarketRuntimeData> res = stockMarketRuntimeDataMapper.selectDownStock(nowDate,createTimeList.get(0),30);
+
+        if(null == res){
+            return;
+        }
+
+        int groupId = 1, i = 0;
+
+        String msg = "[GP]通知: \n 下跌最严重stock[ "+groupId+"]\n";
+
+        for (StockMarketRuntimeData runtimeData:res) {
+
+            msg += "code:" + runtimeData.getStockCode() + "\n";
+            msg += "名称:" + runtimeData.getStockName() + "\n";
+            msg += "实时价格:" + runtimeData.getNewPrice() + "\n";
+            msg += "波动幅度:" + runtimeData.getUpsAndDowns() + "\n";
+            msg += "百分比:" + runtimeData.getUpsAndDowns() + "\n";
+            msg += "换手率:" + runtimeData.getTurnoverRate() + "\n";
+            msg += "url:" + Util.getUrlByCode( runtimeData.getStockCode() ) + "\n";
+            msg += "---------------------------\n";
+            i++;
+
+            if(i >= 5){
+                groupId++;
+                i=0;
+                log.info("dingdingmsg:{}",msg);
+                DingUtil.sendDingTalk(msg);
+                msg = "[GP]通知: \n 下跌最严重stock[ "+groupId+"]\n";
+            }
+
+        }
+    }
+
+
+
 
 }

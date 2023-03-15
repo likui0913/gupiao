@@ -22,6 +22,9 @@
             <result property="turnoverRate" column="turnover_rate" jdbcType="DECIMAL"/>
             <result property="m5Amplitude" column="m_5_amplitude" jdbcType="DECIMAL"/>
             <result property="d60Amplitude" column="d_60_amplitude" jdbcType="DECIMAL"/>
+
+            <result property="upCount" column="up_count" jdbcType="INTEGER"/>
+            <result property="downCount" column="down_count" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -66,6 +69,37 @@
 
     <select id="selectCountByDate" resultType="java.lang.Integer">
         select count(1) from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR};
+    </select>
+
+    <select id="selectByP" resultMap="BaseResultMap">
+        select sum( if(ups_and_downs > 0 , 1, 0) ) as up_count,
+        sum( if(ups_and_downs &lt; 0 , 0, 1) ) as down_count
+        from stock_market_runtime_data where trade_date = #{date,jdbcType=VARCHAR}
+        group by stock_code;
+    </select>
+
+    <select id="selectByDateAndCode" resultMap="BaseResultMap">
+        select *
+        from stock_market_runtime_data
+        where trade_date = #{date,jdbcType=VARCHAR} and stock_code = #{code,jdbcType=VARCHAR}
+        order by trade_time desc
+        limit 1;
+    </select>
+
+
+    <select id="selectDownStock" resultMap="BaseResultMap">
+        select *
+        from stock_market_runtime_data
+        where trade_date = #{date,jdbcType=VARCHAR} and trade_time = #{time,jdbcType=VARCHAR}
+        order by quote_change asc
+        limit #{limit,jdbcType=INTEGER};
+    </select>
+
+
+    <select id="getCreateTimeByDate" resultMap="BaseResultMap">
+        select distinct(trade_time) as trade_time
+        from stock_market_runtime_data smd1
+        where smd1.trade_date = #{date,jdbcType=VARCHAR}
     </select>
 
 </mapper>

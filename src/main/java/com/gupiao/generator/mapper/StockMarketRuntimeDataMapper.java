@@ -1,5 +1,6 @@
 package com.gupiao.generator.mapper;
 
+import com.gupiao.generator.domain.StockMarketData;
 import com.gupiao.generator.domain.StockMarketRuntimeData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,6 +21,23 @@ public interface StockMarketRuntimeDataMapper {
     void deleteByDate(@Param("date") String date);
 
     Integer selectCountByDate(@Param("date") String date);
+
+    StockMarketRuntimeData selectByP( @Param("date") String date );
+
+    StockMarketRuntimeData selectByDateAndCode( @Param("date") String date,@Param("code") String code );
+
+    /**
+     * 基于下跌增量排序，返回指定个数
+     * @param date
+     * @param limit
+     * @return
+     */
+    List<StockMarketRuntimeData> selectDownStock(
+            @Param("date") String date,
+            @Param("time") String time,
+            @Param("limit") Integer limit);
+
+    List<String> getCreateTimeByDate(@Param("date") String date);
 
 }
 

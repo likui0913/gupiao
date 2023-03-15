@@ -169,9 +169,8 @@
         group by smd1.stock_code
         having turnover_rate_p > 2
         order by turnover_rate_p asc
-        limit 100;
+        limit 50;
 
     </select>
-
 
 </mapper>

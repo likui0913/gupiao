@@ -210,8 +210,8 @@ public class UpdateStockDailySaleService {
         String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         String nowDateTime = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2);
 
-        //3 删除数据
-        stockMarketRuntimeDataMapper.deleteByDate(nowDate);
+        //3 删除数据,每天会有多次更新，不再删除当天的历史记录
+        //stockMarketRuntimeDataMapper.deleteByDate(nowDate);
 
         //4 全量数据写入
         stockMarketRuntimeDataMapper.batchInsert(res);
@@ -222,16 +222,21 @@ public class UpdateStockDailySaleService {
 
     }
 
+    /**
+     * 从api获取数据并组装成数据bean格式
+     * @return
+     */
     public List<StockMarketRuntimeData> getNowTradeData(){
-        List<StockMarketRuntimeData> res = new LinkedList<>();
 
+        List<StockMarketRuntimeData> res = new LinkedList<>();
+        String nowTime = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2);
         try {
             String tradeDataString = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_SPOT_EM,null);
             List<Map<String, String>> resList = new Gson().fromJson(tradeDataString, new TypeToken<List<Map<String, String>>>() {}.getType());
             for (Map<String,String> map: resList) {
                 StockMarketRuntimeData sd = BeanTransformation.createStockMarketRuntimeDataFromList(map);
                 sd.setTradeDate(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5));
-                sd.setTradeTime(DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE2));
+                sd.setTradeTime(nowTime);
                 res.add(sd);
             }
         }catch (Exception e){

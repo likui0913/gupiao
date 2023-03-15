@@ -118,7 +118,7 @@ public class UpdateFullStockUpdateTask {
     /**
      * 更新每天的实时交易数据
      */
-    @Scheduled(cron = "0 38 14 * * ?")
+    @Scheduled(cron = "0 30 14 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockNowTradeData(){
 
@@ -144,5 +144,54 @@ public class UpdateFullStockUpdateTask {
         }
 
     }
+
+    @Scheduled(cron = "0 45 9 * * ?")
+    @Async(value="asyncExecutor")
+    public void updateStockNowTradeData2(){
+
+        try{
+
+            log.info("开始刷新全量实时交易信息,date:" + LocalDateTime.now());
+            SysSetting setting = sysSettingMapper.selectByCode("updateRuntimeStockTradeData");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,退出刷新全量实时交易信息");
+                return;
+            }
+
+            //1.刷新当前实时交易信息
+            updateStockDailySaleService.renovateNowTradeDate();
+
+            log.info("结束刷新全量实时交易信,date:" + LocalDateTime.now());
+
+        }catch (Exception e){
+            log.error("updateStockNowTradeData 出现错误！",e);
+        }
+
+    }
+
+    @Scheduled(cron = "0 0 10 * * ?")
+    @Async(value="asyncExecutor")
+    public void updateStockNowTradeData3(){
+
+        try{
+
+            log.info("开始刷新全量实时交易信息,date:" + LocalDateTime.now());
+            SysSetting setting = sysSettingMapper.selectByCode("updateRuntimeStockTradeData");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+                log.info("配置未开启,退出刷新全量实时交易信息");
+                return;
+            }
+
+            //1.刷新当前实时交易信息
+            updateStockDailySaleService.renovateNowTradeDate();
+
+            log.info("结束刷新全量实时交易信,date:" + LocalDateTime.now());
+
+        }catch (Exception e){
+            log.error("updateStockNowTradeData 出现错误！",e);
+        }
+
+    }
+
 
 }

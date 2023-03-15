@@ -96,6 +96,10 @@ public class StockMarketRuntimeData implements Serializable {
      */
     private BigDecimal d60Amplitude;
 
+    private Integer upCount;
+
+    private Integer downCount;
+
     private static final long serialVersionUID = 1L;
 
     public StockMarketRuntimeData(){
@@ -194,6 +198,11 @@ public class StockMarketRuntimeData implements Serializable {
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        BigDecimal a = BigDecimal.valueOf(1.3333000000);
+        System.out.println(a.toString());
     }
 
 }

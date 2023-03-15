@@ -51,9 +51,9 @@ public class Util {
         }else if(exchange.equals(SH)){
             return "http://quote.eastmoney.com/sh" + code + ".html";
         }else if(exchange.equals(BJ)){
-            return "http://quote.eastmoney.com/kcb/" + code + ".html";
-        }else if(exchange.equals(KCB)){
             return "http://quote.eastmoney.com/bj/" + code + ".html";
+        }else if(exchange.equals(KCB)){
+            return "http://quote.eastmoney.com/kcb/" + code + ".html";
         }else{
             return "未知";
         }

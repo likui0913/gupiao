@@ -78,31 +78,4 @@ public class DateUtils {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public static void main(String[] args) {
-        BigDecimal a = BigDecimal.valueOf(1.1);
-        BigDecimal b = BigDecimal.valueOf(2.2);
-        BigDecimal c = BigDecimal.valueOf(3.3);
-        BigDecimal d = BigDecimal.valueOf(1.1);
-        System.out.println(a.compareTo(b));
-        System.out.println(b.compareTo(a));
-        System.out.println(a.compareTo(d));
-
-    }
 }
