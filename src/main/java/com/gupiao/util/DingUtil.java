@@ -29,6 +29,8 @@ public class DingUtil {
         msg.put("text",content);
         String json_str = new Gson().toJson(msg);
 
+        log.info("dingdingmsg:{}",json_str);
+
         try {
             URL url = new URL(StaticValue.DING_DING_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -39,6 +39,8 @@ public interface StockMarketRuntimeDataMapper {
 
     List<String> getCreateTimeByDate(@Param("date") String date);
 
+    StockMarketRuntimeData selectNewDataByCode(@Param("code") String code);
+
 }
 
 

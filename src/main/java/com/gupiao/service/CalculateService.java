@@ -117,7 +117,6 @@ public class CalculateService {
             if(i >= 5){
                 groupId++;
                 i=0;
-                log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
                 msg = "第" + groupId + "组 \n";
                 //避免钉钉消息乱序，此处睡眠一下
@@ -189,7 +188,6 @@ public class CalculateService {
             if(i >= 5){
                 groupId++;
                 i=0;
-                log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
                 msg = "下跌最严重stock[ "+groupId+"]\n";
                 try {

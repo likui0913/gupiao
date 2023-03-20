@@ -107,4 +107,12 @@
         where smd1.trade_date = #{date,jdbcType=VARCHAR}
     </select>
 
+    <select id="selectNewDataByCode" resultMap="BaseResultMap">
+        select *
+        from stock_market_runtime_data smd1
+        where smd1.stock_code = #{code,jdbcType=VARCHAR} order by id desc limit 1;
+    </select>
+
+
+
 </mapper>
