@@ -88,7 +88,7 @@ public class CalculateService {
         String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
         int i = 0;
         int groupId = 1;
-        String msg = "[GP]通知: \n 第" + groupId + "组 \n";
+        String msg = "第" + groupId + "组 \n";
 
         //组装信息
         for (StockMarketData marketData:res) {
@@ -119,7 +119,7 @@ public class CalculateService {
                 i=0;
                 log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
-                msg = "[GP]通知: \n 第" + groupId + "组 \n";
+                msg = "第" + groupId + "组 \n";
                 //避免钉钉消息乱序，此处睡眠一下
                 try {
                     Thread.sleep(50);
@@ -149,9 +149,9 @@ public class CalculateService {
         StockMarketRuntimeData stockMarketRuntimeData = stockMarketRuntimeDataMapper.selectByP(nowDate,createTimeList.get(0));
 
         if(null == stockMarketRuntimeData){
-            DingUtil.sendDingTalk("[GP]通知: 当天涨跌统计结果均为0");
+            DingUtil.sendDingTalk("当天涨跌统计结果均为0");
         }else{
-            DingUtil.sendDingTalk("[GP]通知: 今天上涨个数:" + stockMarketRuntimeData.getUpCount() +
+            DingUtil.sendDingTalk("今天上涨个数:" + stockMarketRuntimeData.getUpCount() +
                     "\n今天下跌个数为:" + stockMarketRuntimeData.getDownCount());
         }
 
@@ -172,7 +172,7 @@ public class CalculateService {
 
         int groupId = 1, i = 0;
 
-        String msg = "[GP]通知: \n 下跌最严重stock[ "+groupId+"]\n";
+        String msg = "下跌最严重stock[ "+groupId+"]\n";
 
         for (StockMarketRuntimeData runtimeData:res) {
 
@@ -191,7 +191,7 @@ public class CalculateService {
                 i=0;
                 log.info("dingdingmsg:{}",msg);
                 DingUtil.sendDingTalk(msg);
-                msg = "[GP]通知: \n 下跌最严重stock[ "+groupId+"]\n";
+                msg = "下跌最严重stock[ "+groupId+"]\n";
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {

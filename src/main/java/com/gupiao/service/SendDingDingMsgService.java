@@ -59,7 +59,7 @@ public class SendDingDingMsgService {
         if(CollectionUtils.isEmpty(res)){
             return;
         }
-        String msg = "[GP]通知: 时间:" + lastSendDate + "\n";
+        String msg = "时间:" + lastSendDate + "\n";
         for (StockMarketStaticData d:res){
             msg += "**************************\n" +
                     "code:" + d.getStockCode() + "\n" +
