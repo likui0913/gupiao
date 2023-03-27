@@ -125,6 +125,7 @@ public class SendDingDingMsgService {
             if(i >= 5){
                 i=0;
                 DingUtil.sendDingTalk(msg);
+                msg = "自动批量发送:\n";
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -146,7 +147,7 @@ public class SendDingDingMsgService {
     public List<AutoNotifyStockData> getStockByMaxId(Long id){
 
         List<AutoNotifyStockData> res = autoNotifyStockDataMapper.selectByMaxId(id);
-        log.info("getStockByMaxId count:" + res.size());
+        //log.info("getStockByMaxId count:" + res.size());
         if(null == res || res.size() == 0){
             return new LinkedList<>();
         }else{

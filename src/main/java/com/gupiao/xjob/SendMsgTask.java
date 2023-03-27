@@ -44,7 +44,7 @@ public class SendMsgTask {
 
         try{
 
-            log.info("SendMsgTask--sengAutoStockMsg 开始执行");
+            //log.info("SendMsgTask--sengAutoStockMsg 开始执行");
 
             String key = "autoNotifyStockData";
             SysSetting setting = sysSettingMapper.selectByCode(key);
@@ -59,7 +59,7 @@ public class SendMsgTask {
             }else if(setting.getSysValue().equalsIgnoreCase("true") ||
                     setting.getSysValue().equalsIgnoreCase("1")){
                 sendDingDingMsgService.sendAutoStockMsg();
-                log.info("SendMsgTask--sengAutoStockMsg 结束执行");
+                //log.info("SendMsgTask--sengAutoStockMsg 结束执行");
             }
 
         }catch (Exception e){

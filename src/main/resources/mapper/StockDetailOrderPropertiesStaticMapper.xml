@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockDetailOrderPropertiesStaticMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockDetailOrderPropertiesStatic">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="tradeTime" column="trade_time" jdbcType="VARCHAR"/>
+            <result property="propertiesUp" column="properties_up" jdbcType="INTEGER"/>
+            <result property="propertiesDown" column="properties_down" jdbcType="INTEGER"/>
+            <result property="propertiesUnbiased" column="properties_unbiased" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,trade_date,
+        trade_time,properties_up,properties_down,
+        properties_unbiased
+    </sql>
+
+    <insert id="insert" parameterType="com.gupiao.generator.domain.StockDetailOrderPropertiesStatic" useGeneratedKeys="true">
+        insert into stock_detail_order_properties_static(stock_code,trade_date,
+                                                         trade_time,properties_up,properties_down,
+                                                         properties_unbiased)
+        values(
+               #{stockCode,jdbcType=VARCHAR},
+               #{tradeDate,jdbcType=VARCHAR},
+               #{tradeTime,jdbcType=VARCHAR},
+               #{propertiesUp,jdbcType=INTEGER},
+               #{propertiesDown,jdbcType=INTEGER},
+               #{propertiesUnbiased,jdbcType=INTEGER})
+    </insert>
+
+
+</mapper>

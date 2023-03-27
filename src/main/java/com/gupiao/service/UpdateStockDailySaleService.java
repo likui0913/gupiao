@@ -2,20 +2,22 @@ package com.gupiao.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.gupiao.bean.api.StockMsg;
 import com.gupiao.enums.ApiUrlPath;
 import com.gupiao.enums.LogSwitchEnums;
-import com.gupiao.generator.domain.StockDetail;
-import com.gupiao.generator.domain.StockMarketData;
-import com.gupiao.generator.domain.StockMarketRuntimeData;
-import com.gupiao.generator.domain.SysSetting;
+import com.gupiao.generator.domain.*;
 import com.gupiao.generator.mapper.*;
 import com.gupiao.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.Executor;
 
 @Component
 @Slf4j
@@ -35,6 +37,15 @@ public class UpdateStockDailySaleService {
 
     @Autowired
     StockMarketRuntimeDataMapper stockMarketRuntimeDataMapper;
+
+    @Autowired
+    StockDetailOrderAllMapper stockDetailOrderAllMapper;
+
+    @Autowired
+    ThreadPoolTaskExecutor stockDetailOrderExecutor;
+
+    @Autowired
+    StockDetailOrderPropertiesStaticMapper stockDetailOrderPropertiesStaticMapper;
 
     public void updateAllStockDailySale(){
 
@@ -61,7 +72,7 @@ public class UpdateStockDailySaleService {
 
         }
         String updateMsg = "updateCount=" + updateCount + ",jumpCount=" + jumpCount + ",errorCount=" + errorCount;
-        DingUtil.sendDingTalk("更新股票交易信息完成:" + updateMsg);
+        DingUtil.sendDingTalk("更新stock交易信息完成:" + updateMsg);
         log.info("updateAllStockDailySale 处理完成," + updateMsg);
         log.info("updateAllStockDailySale 处理完成，时间花费：" + (System.currentTimeMillis() - startTime));
 
@@ -244,6 +255,118 @@ public class UpdateStockDailySaleService {
         }
 
         return res;
+    }
+
+    /**
+     * 刷新股票在当天的交易明细信息，细化到交易笔数，花费时间很长，谨慎调用！！！
+     */
+    public void reStockDetailTradeDate(){
+
+        //1.获取当天时间
+        String nowDate = DateUtils.converDateToString(new Date(),DateUtils.DATE_FORMATE5);
+
+        //2.获取全量code信息
+        List<StockDetail> localAllStock = getLocalAllStock();
+
+        Integer success = 0,zeroCount = 0;
+        for (StockDetail sd:localAllStock) {
+
+            //3.逐个code调用查询
+            if(sd.getStockType().equals(0)){
+                //reStockDetailTradeDateByCode(sd.getStockCode(),nowDate);
+                success++;
+                //多线程模式运行
+                stockDetailOrderExecutor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            reStockDetailTradeDateByCode(sd.getStockCode(),nowDate);
+                        } catch (Exception e) {
+                            log.error("reStockDetailTradeDateByCode-多线程出现错误！",e);
+                        }
+                    }
+                });
+
+            }else{
+                //美股，不做处理
+            }
+
+        }
+
+        DingUtil.sendDingTalk("刷新code每天每笔交易明细数据完成，success=" + success + ",zeroCount=" + zeroCount);
+
+    }
+
+    public void reStockDetailTradeDateByCode(String code,String date){
+
+        //处理国内股票信息
+        List<StockDetailOrderAll> allData = this.getStockDetailOrderAllDateFromDataApi(code,date);
+
+        //4.会写数据库
+        if(null == allData || allData.size() == 0){
+        }else{
+
+            //判断是否想写入明细
+            SysSetting setting = sysSettingMapper.selectByCode("insertStockDetailOrderSwitch");
+            if(null == setting || "0".equals(setting.getSysValue())) {
+
+            }else{
+                stockDetailOrderAllMapper.batchInsert(allData);
+            }
+
+            //写入汇总数据
+            StockDetailOrderPropertiesStatic propertiesStatic = new StockDetailOrderPropertiesStatic();
+            propertiesStatic.setStockCode(code);
+            propertiesStatic.setTradeDate(date);
+            propertiesStatic.setTradeTime("00:00:00");
+            for (StockDetailOrderAll orderAll:allData) {
+                if(orderAll.getProperties().equals(0)){
+                    propertiesStatic.propertiesUnbiasedAdd1();
+                }else if(orderAll.getProperties().equals(1)){
+                    propertiesStatic.propertiesUpAdd1();
+                }else{
+                    propertiesStatic.propertiesDownAdd1();
+                }
+            }
+            stockDetailOrderPropertiesStaticMapper.insert(propertiesStatic);
+
+        }
+
+    }
+
+    /**
+     * 通过code获取当天交易明细数据
+     * @param code
+     * @return
+     */
+    public List<StockDetailOrderAll> getStockDetailOrderAllDateFromDataApi(String code,String date){
+
+        List<StockDetailOrderAll> resData = new LinkedList<>();
+
+        String jys = Util.codeToExchange(code);
+        HashMap map = new HashMap();
+        map.put("CODE_ID",jys + code);
+        log.info("getStockDetailOrderAllDateFromDataApi,code:" + map.get("CODE_ID") );
+        if(LogUtil.getLogSwitchByKey(LogSwitchEnums.STOCK_DETAIL_ORDER_ALL.getName(), Boolean.FALSE)){
+            //log.info("getStockDetailOrderAllDateFromDataApi,code:" + map.get("CODE_ID") );
+        }
+
+        String resStock = null;
+        try {
+            resStock = HttpService.getDataFromUrl(ApiUrlPath.STOCK_ZH_A_TICK_TX_JS,map);
+            List<Map<String, String>> resList = new Gson().fromJson(resStock, new TypeToken<List<Map<String, String>>>() {}.getType());
+            for (Map<String, String> ob:resList) {
+                StockDetailOrderAll orderAll = BeanTransformation.createStockDetailOrderAllDataFromList(ob);
+                orderAll.setTradeDate(date);
+                orderAll.setStockCode(code);
+                resData.add(orderAll);
+            }
+        } catch (IOException e) {
+            log.error("getStockDetailOrderAllDateFromDataApi 出现错误!" ,e);
+        }
+
+        return resData;
+
     }
 
 }

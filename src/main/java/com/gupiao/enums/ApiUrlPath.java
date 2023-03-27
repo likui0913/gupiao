@@ -41,6 +41,8 @@ public enum ApiUrlPath {
     STOCK_DZJY_SCTJ("api/public/stock_dzjy_sctj","上证指数信息"),
     STOCK_HSGT_NORTH_NET_FLOW("api/public/stock_hsgt_north_net_flow_in_em","北向净流入"),
     STOCK_HSGT_SOUTH_NET_FLOW("api/public/stock_hsgt_south_net_flow_in_em","南向净流入"),
+    STOCK_ZH_A_TICK_TX("api/public/stock_zh_a_tick_tx?symbol=CODE_ID&trade_date=TRADE_DATE","获取交易明细数据"),
+    STOCK_ZH_A_TICK_TX_JS("api/public/stock_zh_a_tick_tx_js?symbol=CODE_ID","获取交易明细数据--当天"),
     ;
 
 

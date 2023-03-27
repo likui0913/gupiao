@@ -2,10 +2,7 @@ package com.gupiao.util;
 
 import com.gupiao.bean.api.StockCode;
 import com.gupiao.bean.api.StockMsg;
-import com.gupiao.generator.domain.IndustryTransactions;
-import com.gupiao.generator.domain.StockDetail;
-import com.gupiao.generator.domain.StockMarketData;
-import com.gupiao.generator.domain.StockMarketRuntimeData;
+import com.gupiao.generator.domain.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -321,5 +318,66 @@ public class BeanTransformation {
 
         return runtimeData;
     }
+
+    public static StockDetailOrderAll createStockDetailOrderAllDataFromList(Map<String,String> params){
+
+        StockDetailOrderAll stockDetailOrderAll = new StockDetailOrderAll();
+
+        for ( Map.Entry<String,String> entry : params.entrySet()) {
+            switch(entry.getKey()){
+
+                /*
+                * "成交时间": "09:30:03",
+                "成交价格": 12.77,
+                "价格变动": -0.02,
+                "成交量": 2272,
+                "成交金额": 2904887,
+                "性质": "卖盘"
+                */
+                case "成交时间" :
+                    stockDetailOrderAll.setTradeTime(entry.getValue());
+                    break;
+                case "成交价格" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time1 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    stockDetailOrderAll.setTradePrice(time1);                    break;
+                case "价格变动" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time2 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    stockDetailOrderAll.setChangePrice(time2);
+                    break;
+                case "成交量" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time3 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    stockDetailOrderAll.setVolume(time3);
+                    break;
+                case "成交金额" :
+                    if(null == entry.getValue() || "null".equals(entry.getValue())){
+                        continue;
+                    }
+                    BigDecimal time4 = BigDecimal.valueOf(Double.parseDouble(entry.getValue()));
+                    stockDetailOrderAll.setTurnover(time4);
+                    break;
+                case "性质" :
+                    if("买盘".equals(entry.getValue())){
+                        stockDetailOrderAll.setProperties(1);
+                    }else if("卖盘".equals(entry.getValue())){
+                        stockDetailOrderAll.setProperties(2);
+                    }else{
+                        stockDetailOrderAll.setProperties(0);
+                    }
+                    break;
+            }
+        }
+
+        return stockDetailOrderAll;
+    }
+
 
 }

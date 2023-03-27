@@ -8,7 +8,7 @@ public class Util {
     //定义交易所
     public static String BJ = "bj";
     public static String SZ = "sz";
-    public static String SH = "SH";
+    public static String SH = "sh";
     public static String KCB = "kcb";
 
     /**

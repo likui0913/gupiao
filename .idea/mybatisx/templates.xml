@@ -64,8 +64,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="AutoNotifyStockData" />
-                  <option name="tableName" value="auto_notify_stock_data" />
+                  <option name="className" value="StockDetailOrderPropertiesStatic" />
+                  <option name="tableName" value="stock_detail_order_properties_static" />
                 </TableUIInfo>
               </list>
             </option>

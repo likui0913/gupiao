@@ -5,13 +5,16 @@ import com.gupiao.generator.mapper.SysSettingMapper;
 import com.gupiao.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -38,12 +41,13 @@ public class UpdateFullStockUpdateTask {
     @Autowired
     CalculateService calculateService;
 
+
     ReentrantLock lock = new ReentrantLock();
 
     /**
      * 刷新股票的交易信息
      */
-    @Scheduled(fixedDelay = 1000*60*60)
+    //@Scheduled(fixedDelay = 1000*60*60)
     @Scheduled(cron = "0 10 15 * * ?")
     @Async(value="asyncExecutor")
     public void updateStockSaleData(){
@@ -169,29 +173,31 @@ public class UpdateFullStockUpdateTask {
 
     }
 
-    @Scheduled(cron = "0 0 10 * * ?")
-    @Async(value="asyncExecutor")
-    public void updateStockNowTradeData3(){
+    @Scheduled(cron = "0 0 16 * * ?")
+    //@Async(value="asyncExecutor")
+    //@Scheduled(fixedDelay = 1000*120)
+    public void updateStockDetailTradeDate(){
 
         try{
 
-            log.info("开始刷新全量实时交易信息,date:" + LocalDateTime.now());
-            SysSetting setting = sysSettingMapper.selectByCode("updateRuntimeStockTradeData");
+            log.info("开始刷新全量code交易单笔明细信息,date:" + LocalDateTime.now());
+            SysSetting setting = sysSettingMapper.selectByCode("updateStockDetailTradeData");
             if(null == setting || "0".equals(setting.getSysValue())) {
-                log.info("配置未开启,退出刷新全量实时交易信息");
+                log.info("配置未开启,结束刷新全量code交易单笔明细信息");
                 return;
             }
 
-            //1.刷新当前实时交易信息
-            updateStockDailySaleService.renovateNowTradeDate();
+            updateStockDailySaleService.reStockDetailTradeDate();
 
-            log.info("结束刷新全量实时交易信,date:" + LocalDateTime.now());
+            log.info("退出刷新全量code交易单笔明细信息,date:" + LocalDateTime.now());
 
         }catch (Exception e){
-            log.error("updateStockNowTradeData 出现错误！",e);
+            log.error("updateStockDetailTradeDate 出现错误！",e);
         }
 
     }
+
+
 
 
 }

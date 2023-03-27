@@ -9,7 +9,9 @@ public enum LogSwitchEnums {
     STOCK_TRADE("stock_trade_log_switch","更新历史交易信息"),
     STOCK_STATIC("stock_static_log_switch","更新统计信息"),
     STOCK_TRADE_RUNTIME("stock_trade_runtime_log_switch","更新实时交易数据信息"),
-    STOCK_STATIC_TWO_DAY("stock_static_two_day_log_switch","更新统计两段统计信息");
+    STOCK_STATIC_TWO_DAY("stock_static_two_day_log_switch","更新统计两段统计信息"),
+    STOCK_DETAIL_ORDER_ALL("stock_detail_order_all_log_switch","更新股票交易明细数据"),
+    ;
 
 
     private String name;

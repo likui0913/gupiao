@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gupiao.generator.mapper.StockDetailOrderAllMapper">
+
+    <resultMap id="BaseResultMap" type="com.gupiao.generator.domain.StockDetailOrderAll">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="VARCHAR"/>
+            <result property="tradeTime" column="trade_time" jdbcType="VARCHAR"/>
+            <result property="properties" column="properties" jdbcType="INTEGER"/>
+            <result property="tradePrice" column="trade_price" jdbcType="DECIMAL"/>
+            <result property="changePrice" column="change_price" jdbcType="DECIMAL"/>
+            <result property="volume" column="volume" jdbcType="DECIMAL"/>
+            <result property="turnover" column="turnover" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stock_code,trade_date,
+        trade_time,properties,trade_price,
+        change_price,volume,turnover
+    </sql>
+
+    <insert id="batchInsert" parameterType="com.gupiao.generator.domain.StockDetailOrderAll" useGeneratedKeys="true">
+        insert into stock_detail_order_all
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            stock_code,trade_date,
+            trade_time,properties,trade_price,
+            change_price,volume,turnover
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            <trim suffixOverrides=",">
+                #{item.stockCode,jdbcType=VARCHAR},
+                #{item.tradeDate,jdbcType=VARCHAR},
+                #{item.tradeTime,jdbcType=VARCHAR},
+                #{item.properties,jdbcType=INTEGER},
+                #{item.tradePrice,jdbcType=DECIMAL},
+                #{item.changePrice,jdbcType=DECIMAL},
+                #{item.volume,jdbcType=DECIMAL},
+                #{item.turnover,jdbcType=DECIMAL}
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+</mapper>
